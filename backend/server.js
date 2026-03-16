@@ -1,11 +1,17 @@
 const express = require("express");
 const supabase = require("./config/supabase");
 const userRoutes = require("./routes/userRoutes");
+const hospitalRoutes = require("./routes/hospitalRoutes");
+const bloodRequestRoutes = require("./routes/bloodRequestRoutes");
+const donationRoutes = require("./routes/donationRoutes");
 
 const app = express();
 app.use(express.json());
 // Register routes
 app.use("/users", userRoutes);
+app.use("/hospitals", hospitalRoutes);
+app.use("/blood-requests", bloodRequestRoutes);
+app.use("/donations", donationRoutes);
 
 // JSON parse error handler (returns 400 with a helpful message)
 app.use((err, req, res, next) => {
