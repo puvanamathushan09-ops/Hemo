@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const supabase = require("./config/supabase");
 const userRoutes = require("./routes/userRoutes");
 const hospitalRoutes = require("./routes/hospitalRoutes");
@@ -6,6 +7,7 @@ const bloodRequestRoutes = require("./routes/bloodRequestRoutes");
 const donationRoutes = require("./routes/donationRoutes");
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 // Register routes
 app.use("/users", userRoutes);
