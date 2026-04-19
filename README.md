@@ -14,7 +14,7 @@ A comprehensive, real-time web application designed to bridge the gap between bl
 - **Styling**: Vanilla CSS & Bootstrap
 - **Hosting**: 
   - **Frontend**: [Netlify](https://www.netlify.com/)
-  - **Backend**: [Render](https://render.com/)
+  - **Backend**: [Live on Render](https://hemo-n2ss.onrender.com)
 
 ---
 
