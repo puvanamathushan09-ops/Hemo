@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5001";
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5001";
 
 // Helper to get auth token from local storage
 const getHeaders = () => {
