@@ -34,6 +34,5 @@ logs/
 Thumbs.db
 
 # Sub-project specific entries
-hemo_frontend/node_modules/
-backend/Hemo/node_modules/
-backend/Hemo/backend/node_modules/
+frontend/node_modules/
+backend/node_modules/
