@@ -23,14 +23,6 @@ const Icons = {
   )
 };
 
-const PRESET_AVATARS = [
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=b6e3f4",
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka&backgroundColor=c0aede",
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=Caleb&backgroundColor=d1d4f9",
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=Avery&backgroundColor=ffd5dc",
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=James&backgroundColor=ffdfbf",
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=Sophia&backgroundColor=c1f2e1"
-];
 
 export default function UserDashboard() {
   const navigate = useNavigate();
@@ -107,18 +99,6 @@ export default function UserDashboard() {
     }
   };
 
-  const handleChangeAvatar = async (url) => {
-    try {
-      const { data } = await api.updateUser(user.id, { avatar_url: url });
-      const updatedUser = { ...user, ...data };
-      setUser(updatedUser);
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      toast.success("Avatar modified");
-      setModal(null);
-    } catch (err) {
-      toast.error("Avatar update failed");
-    }
-  };
 
   if (loading) return <div className="hemo-preloader-text" style={{padding: '100px', textAlign: 'center'}}>SYNCHRONIZING SECURE NODE...</div>;
 

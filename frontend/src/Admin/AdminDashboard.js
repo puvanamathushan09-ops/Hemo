@@ -313,21 +313,6 @@ export default function AdminDashboard() {
   };
 
   /* ── REQUEST CRUD ── */
-  const handleUpdateBloodRequest = async (e) => {
-    e.preventDefault();
-    try {
-      await api.updateRequest(editItem.id, {
-        blood_group: requestForm.blood_group,
-        city: requestForm.city,
-        status: requestForm.status
-      });
-      toast.success("Request synchronized successfully");
-      setModal(null);
-      fetchAll();
-    } catch (err) {
-      toast.error("Failed to update blood request");
-    }
-  };
 
   const handleDeleteRequest = async (id) => {
     if (!window.confirm("Delete this blood request?")) return;
@@ -396,20 +381,6 @@ export default function AdminDashboard() {
     setModal("editDonation");
   };
 
-  const handleUpdateDonation = async (e) => {
-    e.preventDefault();
-    try {
-      await api.updateDonation(editItem.id, {
-        donation_date: donationForm.donation_date,
-        status: donationForm.status
-      });
-      toast.success("Donation records updated");
-      setModal(null);
-      fetchAll();
-    } catch (err) {
-      toast.error("Failed to update donation record");
-    }
-  };
 
   const handleUpdateRequestStatus = async (id, newStatus) => {
     try {
