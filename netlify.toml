@@ -1,10 +1,9 @@
 [build]
-  # Tell Netlify to look in the frontend folder
-  base = "frontend"
-  # Tell Netlify that the build output is in the 'build' folder (relative to 'frontend')
-  publish = "build"
-  # The command to run to build your site (CI=false prevents warnings from failing the build)
-  command = "CI=false npm run build"
+  # Explicitly build from the root context
+  command = "cd frontend && npm install && npm run build"
+  
+  # Point to the resulting build folder relative to the root
+  publish = "frontend/build"
 
 # This handles the "Page Not Found" (404) errors for React Router
 [[redirects]]
