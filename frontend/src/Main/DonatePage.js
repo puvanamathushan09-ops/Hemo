@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../utils/api";
 import "../hemo.css";
+import { Icons } from "../components/Icons";
 
 function HemoLogoSVG({ size = 36 }) {
   return (
@@ -108,7 +109,7 @@ export default function DonatePage() {
                 className={`sos-card ${formData.request_id === "" ? "active" : ""}`}
                 onClick={() => setFormData({...formData, request_id: ""})}
               >
-                <div className="sos-card-icon">🏨</div>
+                <div className="sos-card-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.Hospitals size={24} /></div>
                 <div className="sos-card-group">GENERAL</div>
                 <div className="sos-card-city">Network</div>
               </div>
@@ -119,7 +120,7 @@ export default function DonatePage() {
                   className={`sos-card ${formData.request_id === req.id ? "active" : ""}`}
                   onClick={() => setFormData({...formData, request_id: req.id})}
                 >
-                  <div className="sos-card-icon">🩸</div>
+                  <div className="sos-card-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icons.Drop size={24} /></div>
                   <div className="sos-card-group">{req.blood_group}</div>
                   <div className="sos-card-city">{req.city}</div>
                 </div>
@@ -129,15 +130,15 @@ export default function DonatePage() {
             {/* Live Alerts Marquee moved directly under chips Phase 20 */}
             <div className="hemo-marquee" style={{ background: 'rgba(230, 57, 70, 0.03)', margin: '0.5rem 0 2rem', height: 40, borderRadius: 12, border: 'none' }}>
               <div className="marquee-content highlight">
-                <span className="marquee-item" style={{ fontSize: '0.75rem' }}>🚨 <strong>URGENT:</strong> Hospital centers are reporting low reserves in {formData.request_id ? "your selected region" : "all sectors"}.</span>
-                <span className="marquee-item" style={{ fontSize: '0.75rem' }}>🛡️ Your data is encrypted and HIPAA compliant.</span>
-                <span className="marquee-item" style={{ fontSize: '0.75rem' }}>🚨 🚨 🚨 NETWORK ALERT: EMERGENCY SUPPLIES NEEDED 🚨 🚨 🚨</span>
+                <span className="marquee-item" style={{ fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '6px', verticalAlign:'text-bottom' }}><Icons.ActivityAlert size={14} /> <strong>URGENT:</strong> Hospital centers are reporting low reserves in {formData.request_id ? "your selected region" : "all sectors"}.</span>
+                <span className="marquee-item" style={{ fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '6px', verticalAlign:'text-bottom' }}><Icons.Shield size={14} /> Your data is encrypted and HIPAA compliant.</span>
+                <span className="marquee-item" style={{ fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '6px', verticalAlign:'text-bottom' }}><Icons.ActivityAlert size={14} /> NETWORK ALERT: EMERGENCY SUPPLIES NEEDED</span>
               </div>
             </div>
           </div>
 
-          <div className="hemo-info-box" style={{ background: 'var(--bg-700)', color: 'var(--text-400)', border: 'none', borderRadius: 16 }}>
-            🔒 <strong>Session Authenticated:</strong> Your donor record will be linked to this pledge automatically.
+          <div className="hemo-info-box" style={{ background: 'var(--bg-700)', color: 'var(--text-400)', border: 'none', borderRadius: 16, display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Icons.Lock size={18} style={{ flexShrink: 0 }} /> <div><strong>Session Authenticated:</strong> Your donor record will be linked to this pledge automatically.</div>
           </div>
 
           <button type="submit" className="hemo-form-submit" disabled={loading} style={{ borderRadius: 16, height: 60, fontSize: '1.1rem' }}>

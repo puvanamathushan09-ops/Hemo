@@ -11,7 +11,7 @@ const getUsers = async (req, res) => {
 };
 
 const registerUser = async (req, res) => {
-  const { full_name, email, password, phone, blood_group, city, role } = req.body;
+  const { full_name, email, password, phone, blood_group, city, role, address } = req.body;
 
   if (!full_name || !email || !password) {
     return res.status(400).json({ error: "`full_name`, `email` and `password` are required" });
@@ -27,7 +27,8 @@ const registerUser = async (req, res) => {
       phone: phone || null,
       blood_group: blood_group || null,
       city: city || null,
-      role: role || null
+      role: role || null,
+      address: address || null
     };
 
     // Request the inserted row(s) to be returned

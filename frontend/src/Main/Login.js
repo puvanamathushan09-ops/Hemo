@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../utils/api";
 import "../hemo.css";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 function HemoLogoSVG({ size = 36 }) {
   return (
@@ -36,9 +36,9 @@ export default function Login() {
 
       // Navigate based on role
       if (data.user.role === 'admin') {
-        setTimeout(() => navigate("/life-saving-blood-bank/admin"), 1000);
+        setTimeout(() => navigate("/admin-dashboard"), 1000);
       } else {
-        setTimeout(() => navigate("/life-saving-blood-bank/dashboard"), 1000);
+        setTimeout(() => navigate("/dashboard"), 1000);
       }
     } catch (err) {
       toast.error(err.message || "Invalid credentials. Please try again.");

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../utils/api";
 import "../hemo.css";
+import { Icons } from "../components/Icons";
 
 function HemoLogoSVG({ size = 36 }) {
   return (
@@ -144,8 +145,8 @@ export default function RequestNew() {
             <strong>Note:</strong> Your patient ID and request timestamps are automatically generated securely by the Hemo platform upon submission.
           </div>
 
-          <button type="submit" className="hemo-form-submit" data-aos="fade-up" data-aos-delay="300" disabled={loading}>
-            <span style={{ marginRight: '8px' }}>🚨</span> {loading ? "Loading..." : "Submit Emergency Request"}
+          <button type="submit" className="hemo-form-submit" data-aos="fade-up" data-aos-delay="300" disabled={loading} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <Icons.ActivityAlert size={20} /> {loading ? "Loading..." : "Submit Emergency Request"}
           </button>
         </form>
       </div>

@@ -1,49 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../utils/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../hemo.css";
 
-/* ── SVG Icons ── */
-const Icons = {
-  Overview: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-  ),
-  Users: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-  ),
-  Hospitals: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h3a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1h-3"></path><path d="M6 2H3a1 1 0 0 0-1 1v18a1 1 0 0 0 1 1h3"></path><path d="M2 8h20"></path><path d="M2 14h20"></path><path d="M10 2v20"></path><path d="M14 2v20"></path></svg>
-  ),
-  Requests: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-  ),
-  Donations: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-  ),
-  Refresh: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-  ),
-  Logout: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-  ),
-  Edit: () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-  ),
-  Delete: () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-  ),
-  Check: () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-  ),
-  Search: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-  ),
-  Plus: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-  )
-};
+import { Icons } from "../components/Icons";
 
 /* ── Custom SVG Charts ── */
 function SimpleAreaChart({ data }) {
@@ -74,19 +36,11 @@ function SimpleAreaChart({ data }) {
             <stop offset="100%" stopColor="var(--hemo-red)" stopOpacity="0" />
           </linearGradient>
         </defs>
-        
-        {/* Grid Lines */}
         {[0, 0.25, 0.5, 0.75, 1].map(v => (
           <line key={v} x1={padding} y1={padding + v * chartHeight} x2={padding + chartWidth} y2={padding + v * chartHeight} className="chart-grid-line" />
         ))}
-
-        {/* Area */}
         <path d={areaD} fill="url(#chartGradient)" />
-        
-        {/* Line */}
         <path d={pathD} fill="none" stroke="var(--hemo-red)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="chart-area-path" />
-
-        {/* Labels */}
         {data.map((d, i) => (
           <text key={i} x={padding + (i / (data.length - 1)) * chartWidth} y={height - 15} textAnchor="middle" className="chart-label">{d.label}</text>
         ))}
@@ -113,15 +67,9 @@ function SimpleBarChart({ data }) {
           const barH = (d.value / maxVal) * chartHeight;
           const x = padding + i * (barWidth + gap);
           const y = height - padding - barH;
-          
           return (
             <g key={i}>
-              <rect 
-                x={x} y={y} width={barWidth} height={barH} 
-                fill={i % 2 === 0 ? "var(--hemo-red)" : "var(--hemo-red-dark)"} 
-                rx="4" className="chart-bar" 
-                style={{ animationDelay: `${i * 0.1}s` }}
-              />
+              <rect x={x} y={y} width={barWidth} height={barH} fill={i % 2 === 0 ? "var(--hemo-red)" : "var(--hemo-red-dark)"} rx="4" className="chart-bar" style={{ animationDelay: `${i * 0.1}s` }} />
               <text x={x + barWidth / 2} y={height - 15} textAnchor="middle" className="chart-label">{d.label}</text>
               <text x={x + barWidth / 2} y={y - 8} textAnchor="middle" className="chart-value-label">{d.value}</text>
             </g>
@@ -144,6 +92,213 @@ function Modal({ title, onClose, children }) {
   );
 }
 
+/* ── Leaflet Map Component ── */
+function LeafletRouteMap({ mapCoords, hospitalName, donorName, onClose }) {
+  const mapRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+
+  useEffect(() => {
+    if (!mapCoords) return;
+
+    const initMap = () => {
+      if (!mapRef.current) return;
+
+      // Destroy previous instance
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+
+      const L = window.L;
+
+      const map = L.map(mapRef.current, { zoomControl: true, scrollWheelZoom: true });
+      mapInstanceRef.current = map;
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 18
+      }).addTo(map);
+
+      // Hospital marker — red H
+      const hospitalIcon = L.divIcon({
+        className: '',
+        html: `<div style="
+          width:36px;height:36px;border-radius:50% 50% 50% 0;
+          background:#e63946;border:3px solid #fff;
+          box-shadow:0 4px 14px rgba(230,57,70,0.6);
+          display:flex;align-items:center;justify-content:center;
+          font-weight:900;font-size:14px;color:#fff;
+          transform:rotate(-45deg);
+        "><span style="transform:rotate(45deg)">H</span></div>`,
+        iconSize: [36, 36],
+        iconAnchor: [18, 36],
+        popupAnchor: [0, -40]
+      });
+
+      // Donor marker — blue D
+      const donorIcon = L.divIcon({
+        className: '',
+        html: `<div style="
+          width:36px;height:36px;border-radius:50% 50% 50% 0;
+          background:#3a86ff;border:3px solid #fff;
+          box-shadow:0 4px 14px rgba(58,134,255,0.6);
+          display:flex;align-items:center;justify-content:center;
+          font-weight:900;font-size:14px;color:#fff;
+          transform:rotate(-45deg);
+        "><span style="transform:rotate(45deg)">D</span></div>`,
+        iconSize: [36, 36],
+        iconAnchor: [18, 36],
+        popupAnchor: [0, -40]
+      });
+
+      const hLatLng = [mapCoords.hospital.lat, mapCoords.hospital.lng];
+      const dLatLng = [mapCoords.donor.lat, mapCoords.donor.lng];
+
+      L.marker(hLatLng, { icon: hospitalIcon })
+        .addTo(map)
+        .bindPopup(`<b>🏥 Hospital</b><br/>${hospitalName}`)
+        .openPopup();
+
+      L.marker(dLatLng, { icon: donorIcon })
+        .addTo(map)
+        .bindPopup(`<b>💉 Donor</b><br/>${donorName}`);
+
+      // Dashed route line
+      L.polyline([hLatLng, dLatLng], {
+        color: '#e63946',
+        weight: 3,
+        dashArray: '10 6',
+        opacity: 0.8
+      }).addTo(map);
+
+      // Fit both markers into view
+      map.fitBounds([hLatLng, dLatLng], { padding: [40, 40] });
+    };
+
+    if (!window.L) {
+      // Inject Leaflet CSS
+      if (!document.querySelector('#leaflet-css')) {
+        const link = document.createElement('link');
+        link.id = 'leaflet-css';
+        link.rel = 'stylesheet';
+        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+        document.head.appendChild(link);
+      }
+      // Inject Leaflet JS
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      script.onload = initMap;
+      document.head.appendChild(script);
+    } else {
+      initMap();
+    }
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, [mapCoords]);
+
+  return (
+    <div style={{
+      position: 'fixed',
+      right: 24,
+      top: '50%',
+      transform: 'translateY(-50%)',
+      width: 360,
+      height: 460,
+      background: 'var(--bg-800, #1a1a2e)',
+      borderRadius: 20,
+      boxShadow: '0 24px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.08)',
+      overflow: 'hidden',
+      zIndex: 10001,
+      display: 'flex',
+      flexDirection: 'column',
+      animation: 'slideInRight 0.35s cubic-bezier(0.34,1.56,0.64,1)'
+    }}>
+      {/* Header */}
+      <div style={{
+        padding: '14px 18px',
+        background: 'rgba(230,57,70,0.12)',
+        borderBottom: '1px solid rgba(230,57,70,0.2)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexShrink: 0
+      }}>
+        <div>
+          <div style={{ fontSize: '0.7rem', color: 'var(--hemo-red, #e63946)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 2 }}>
+            ◉ Live Route Map
+          </div>
+          <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>
+            H → D Navigation Path
+          </div>
+        </div>
+        <button
+          onClick={onClose}
+          style={{
+            background: 'rgba(255,255,255,0.07)',
+            border: 'none',
+            borderRadius: 8,
+            color: 'rgba(255,255,255,0.6)',
+            cursor: 'pointer',
+            width: 30,
+            height: 30,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 16,
+            fontWeight: 700
+          }}
+        >×</button>
+      </div>
+
+      {/* Legend */}
+      <div style={{
+        display: 'flex',
+        gap: 16,
+        padding: '10px 18px',
+        background: 'rgba(0,0,0,0.2)',
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        flexShrink: 0
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.72rem', color: 'rgba(255,255,255,0.7)' }}>
+          <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#e63946', flexShrink: 0 }} />
+          <span style={{ fontWeight: 700 }}>H</span> — {hospitalName}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.72rem', color: 'rgba(255,255,255,0.7)' }}>
+          <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#3a86ff', flexShrink: 0 }} />
+          <span style={{ fontWeight: 700 }}>D</span> — {donorName}
+        </div>
+      </div>
+
+      {/* Map */}
+      <div ref={mapRef} style={{ flex: 1, width: '100%' }} />
+
+      {/* Footer */}
+      <div style={{
+        padding: '8px 18px',
+        background: 'rgba(0,0,0,0.3)',
+        fontSize: '0.65rem',
+        color: 'rgba(255,255,255,0.3)',
+        textAlign: 'center',
+        flexShrink: 0
+      }}>
+        © OpenStreetMap contributors • Click donor to update
+      </div>
+
+      <style>{`
+        @keyframes slideInRight {
+          from { opacity: 0; transform: translateY(-50%) translateX(40px) scale(0.95); }
+          to   { opacity: 1; transform: translateY(-50%) translateX(0)   scale(1);    }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 /* ══════════════════════════════════════════
    MAIN ADMIN DASHBOARD COMPONENT
    ══════════════════════════════════════════ */
@@ -162,20 +317,26 @@ export default function AdminDashboard() {
   const [search, setSearch] = useState("");
 
   // Modal states
-  const [modal, setModal] = useState(null); // 'addHospital' | 'editHospital' | 'editUser' | 'addUser'
+  const [modal, setModal] = useState(null);
   const [editItem, setEditItem] = useState(null);
-  const [hospitalForm, setHospitalForm] = useState({ name: "", city: "", contact_number: "", email: "" });
-  const [userForm, setUserForm] = useState({ full_name: "", email: "", role: "donor", city: "", blood_group: "O+", password: "password123" });
-  const [requestForm, setRequestForm] = useState({ blood_group: "O+", city: "", units: 1, hospital_id: "", status: "pending" });
+  const [hospitalForm, setHospitalForm] = useState({ name: "", city: "", contact_number: "", email: "", address: "" });
+  const [userForm, setUserForm] = useState({ full_name: "", email: "", role: "donor", city: "", address: "", blood_group: "O+", password: "password123" });
+  const [requestForm, setRequestForm] = useState({ blood_group: "O+", city: "", units: 1, hospital_id: "" });
   const [donationForm, setDonationForm] = useState({ donation_date: "", status: "pledged" });
   const [isBroadcasting, setIsBroadcasting] = useState(false);
+  const [modalStep, setModalStep] = useState(1);
+  const [selectedDonor, setSelectedDonor] = useState(null);
+  const [logistics, setLogistics] = useState(null);
+  const [mapCoords, setMapCoords] = useState(null);       // ← NEW: stores H + D coordinates
+  const [showMap, setShowMap] = useState(false);           // ← NEW: floating map visibility
+  const [confirmAction, setConfirmAction] = useState(null);
 
   // Auth check
   let adminUser = null;
   try {
     adminUser = JSON.parse(localStorage.getItem("user") || "null");
   } catch (e) {
-    console.error("❌ localStorage parse error:", e);
+    console.error("localStorage parse error:", e);
     localStorage.removeItem("user");
   }
 
@@ -197,7 +358,10 @@ export default function AdminDashboard() {
         api.getBloodRequests(),
         api.getDonations()
       ]);
-      setUsers(u); setHospitals(h); setRequests(r); setDonations(d);
+      setUsers(Array.isArray(u) ? u : []);
+      setHospitals(Array.isArray(h) ? h : []);
+      setRequests(Array.isArray(r) ? r : []);
+      setDonations(Array.isArray(d) ? d : []);
     } catch {
       toast.warn("Backend connection failed — showing demo data");
       setUsers([
@@ -224,9 +388,7 @@ export default function AdminDashboard() {
 
   /* ── HOSPITAL CRUD ── */
   const handleAddHospital = async () => {
-    if (!hospitalForm.name || !hospitalForm.city) {
-      toast.error("Hospital name and city are required"); return;
-    }
+    if (!hospitalForm.name || !hospitalForm.city) { toast.error("Hospital name and city are required"); return; }
     try {
       const created = await api.createHospital(hospitalForm);
       setHospitals([created, ...hospitals]);
@@ -236,7 +398,7 @@ export default function AdminDashboard() {
       setHospitals([mock, ...hospitals]);
       toast.success(`"${hospitalForm.name}" added locally`);
     }
-    setHospitalForm({ name: "", city: "", contact_number: "", email: "" });
+    setHospitalForm({ name: "", city: "", contact_number: "", email: "", address: "" });
     setModal(null);
   };
 
@@ -253,39 +415,40 @@ export default function AdminDashboard() {
   };
 
   const handleDeleteHospital = async (id, name) => {
-    if (!window.confirm(`Are you sure you want to delete "${name}"?`)) return;
-    try {
-      await api.deleteHospital(id);
-      toast.success(`"${name}" removed`);
-    } catch { toast.success(`"${name}" removed locally`); }
-    setHospitals(hospitals.filter(h => h.id !== id));
+    setConfirmAction({
+      title: "Confirm Deletion",
+      message: `Are you sure you want to retract Hospital Hub "${name}" from the network?`,
+      onConfirm: async () => {
+        try {
+          await api.deleteHospital(id);
+          toast.success(`Hub "${name}" de-registered`);
+          setHospitals(hospitals.filter(h => h.id !== id));
+        } catch { toast.error("De-registration failed"); }
+        setConfirmAction(null);
+      }
+    });
   };
 
   /* ── USER CRUD ── */
   const handleAddUser = async () => {
-    if (!userForm.full_name || !userForm.email) {
-      toast.error("Name and Email are required"); return;
-    }
+    if (!userForm.full_name || !userForm.email) { toast.error("Name and Email are required"); return; }
     try {
-      const created = await api.register(userForm);
-      setUsers([created.user, ...users]);
-      toast.success(`User "${userForm.full_name}" registered!`);
+      const resp = await api.register(userForm);
+      const newUser = (resp.data && resp.data[0]) ? resp.data[0] : resp.user;
+      setUsers([newUser, ...users]);
+      toast.success(`User "${userForm.full_name}" synchronized with network`);
     } catch (err) {
+      toast.error(`System Block: ${err.message || "Credential conflict"}`);
       const mock = { ...userForm, id: "u-" + Date.now() };
       setUsers([mock, ...users]);
-      toast.success(`User "${userForm.full_name}" added locally`);
     }
-    setUserForm({ full_name: "", email: "", role: "donor", city: "", blood_group: "O+", password: "password123" });
+    setUserForm({ full_name: "", email: "", role: "donor", city: "", address: "", blood_group: "O+", password: "password123" });
     setModal(null);
   };
 
   const handleEditRequest = (req) => {
     setEditItem(req);
-    setRequestForm({
-      blood_group: req.blood_group,
-      city: req.city,
-      status: req.status
-    });
+    setRequestForm({ blood_group: req.blood_group, city: req.city, status: req.status });
     setModal("editRequest");
   };
 
@@ -302,36 +465,119 @@ export default function AdminDashboard() {
   };
 
   const handleDeleteUser = async (id, name) => {
-    if (!window.confirm(`Delete user "${name}"? This action is permanent.`)) return;
-    try {
-      await api.deleteUser(id);
-      toast.success(`User "${name}" deleted from network`);
-      setUsers(users.filter(u => u.id !== id));
-    } catch (err) { 
-      toast.error(`Deletion failed: ${err.message}`); 
-    }
+    setConfirmAction({
+      title: "Terminate Identity",
+      message: `Permanently remove "${name}" from the Hemo identity registry? This cannot be undone.`,
+      onConfirm: async () => {
+        try {
+          await api.deleteUser(id);
+          toast.success(`User "${name}" deleted from network`);
+          setUsers(users.filter(u => u.id !== id));
+        } catch (err) { toast.error(`Deletion failed: ${err.message}`); }
+        setConfirmAction(null);
+      }
+    });
   };
 
   /* ── REQUEST CRUD ── */
-
   const handleDeleteRequest = async (id) => {
-    if (!window.confirm("Delete this blood request?")) return;
-    try {
-      await api.deleteBloodRequest(id);
-      toast.success("Request deleted");
-    } catch { toast.success("Request deleted locally"); }
-    setRequests(requests.filter(r => r.id !== id));
+    setConfirmAction({
+      title: "Retract SOS",
+      message: "Are you sure you want to cancel this emergency request? Dispatched donors will be notified.",
+      onConfirm: async () => {
+        try {
+          await api.deleteBloodRequest(id);
+          toast.success("Request deleted");
+        } catch { toast.error("Database sync failed"); }
+        setRequests(requests.filter(r => r.id !== id));
+        setConfirmAction(null);
+      }
+    });
   };
 
-  const handleBroadcastSOS = async () => {
+  /* ── LOGISTICS + MAP ── */
+  const handleGetLogistics = async (donor) => {
+    const hospital = hospitals.find(h => h.id === requestForm.hospital_id);
+    if (!hospital || !donor) return;
+
+    setSelectedDonor(donor);
+    setLogistics(null);
+    setMapCoords(null);
+    setShowMap(false);
+
+    try {
+      const hospitalQuery = `${hospital.name}, ${hospital.address || hospital.city}, Sri Lanka`;
+      const donorQuery = `${donor.address || donor.city}, Sri Lanka`;
+
+      const [hRes, dRes] = await Promise.all([
+        fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(hospitalQuery)}&limit=1`).then(r => r.json()),
+        fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(donorQuery)}&limit=1`).then(r => r.json())
+      ]);
+
+      let hPoint = hRes.features?.[0]?.geometry?.coordinates;
+      let dPoint = dRes.features?.[0]?.geometry?.coordinates;
+
+      if (!hPoint) {
+        const fall = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(hospital.city + ", Sri Lanka")}&limit=1`).then(r => r.json());
+        hPoint = fall.features?.[0]?.geometry?.coordinates;
+      }
+      if (!dPoint) {
+        const fall = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(donor.city + ", Sri Lanka")}&limit=1`).then(r => r.json());
+        dPoint = fall.features?.[0]?.geometry?.coordinates;
+      }
+
+      if (hPoint && dPoint) {
+        const [hLon, hLat] = hPoint;
+        const [dLon, dLat] = dPoint;
+
+        // Store coords for map ← NEW
+        setMapCoords({
+          hospital: { lat: hLat, lng: hLon },
+          donor: { lat: dLat, lng: dLon }
+        });
+        setShowMap(true); // ← auto-open map when coords ready
+
+        // Haversine distance
+        const R = 6371;
+        const dLatRad = (dLat - hLat) * Math.PI / 180;
+        const dLonRad = (dLon - hLon) * Math.PI / 180;
+        const a = Math.sin(dLatRad / 2) ** 2 +
+          Math.cos(hLat * Math.PI / 180) * Math.cos(dLat * Math.PI / 180) * Math.sin(dLonRad / 2) ** 2;
+        const haversineDist = (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))).toFixed(1);
+
+        try {
+          const routeRes = await fetch(`https://router.project-osrm.org/route/v1/driving/${hLon},${hLat};${dLon},${dLat}?overview=false`).then(r => r.json());
+          if (routeRes.code === 'Ok' && routeRes.routes?.[0]) {
+            const dist = (routeRes.routes[0].distance / 1000).toFixed(1);
+            const time = Math.round(routeRes.routes[0].duration / 60);
+            setLogistics({ distance: parseFloat(dist) < 0.1 ? haversineDist : dist, duration: time || Math.round(haversineDist * 2) });
+          } else throw new Error("OSRM Fail");
+        } catch {
+          setLogistics({ distance: haversineDist, duration: Math.round(haversineDist * 3) });
+        }
+      } else {
+        setLogistics({ distance: "N/A", duration: "N/A" });
+      }
+    } catch (err) {
+      console.error("Logistics Error", err);
+      setLogistics({ distance: "!!", duration: "!!" });
+    }
+  };
+
+  const handleBroadcastSOS = async (targetDonor = null) => {
     const selectedHospital = hospitals.find(h => h.id === requestForm.hospital_id);
     if (!selectedHospital) { toast.error("Please select a hospital node"); return; }
-    
-    const matchingDonors = users.filter(u => 
-      u.role === "donor" && 
-      u.blood_group === requestForm.blood_group && 
-      u.city?.toLowerCase() === selectedHospital.city?.toLowerCase()
-    );
+
+    let matchingDonors = [];
+    if (targetDonor) {
+      matchingDonors = [targetDonor];
+    } else {
+      matchingDonors = users.filter(u =>
+        u.role === "donor" &&
+        u.blood_group === requestForm.blood_group &&
+        u.city?.toLowerCase() === selectedHospital.city?.toLowerCase()
+      );
+    }
 
     if (matchingDonors.length === 0) {
       toast.warn("No active donors found in this sector matching the blood group");
@@ -340,19 +586,15 @@ export default function AdminDashboard() {
 
     setIsBroadcasting(true);
     try {
-      // 1. Create the request in the DB
       const reqData = {
         blood_group: requestForm.blood_group,
         city: selectedHospital.city,
-        status: "pending",
-        patient_id: null, // System-initiated
+        status: "approved",
+        patient_id: null,
         hospital_id: selectedHospital.id
       };
-      
       const newReq = await api.createBloodRequest(reqData);
       setRequests([newReq, ...requests]);
-
-      // 2. Broadcast Notifications via Backend
       await api.sendNotifications({
         request_id: newReq.id,
         blood_group: requestForm.blood_group,
@@ -360,12 +602,12 @@ export default function AdminDashboard() {
         units: requestForm.units,
         donor_emails: matchingDonors.map(d => d.email)
       });
-
-      toast.success(`SOS Broadcast sent to ${matchingDonors.length} donors!`);
+      toast.success(targetDonor ? `SOS Alert sent to ${targetDonor.full_name}!` : `SOS Broadcast sent to ${matchingDonors.length} donors!`);
       setModal(null);
-    } catch (err) {
+      setShowMap(false);
+      setMapCoords(null);
+    } catch {
       toast.error("Broadcast partially failed: Check connection");
-      console.error(err);
     } finally {
       setIsBroadcasting(false);
     }
@@ -374,22 +616,16 @@ export default function AdminDashboard() {
   /* ── DONATION CRUD ── */
   const handleEditDonation = (don) => {
     setEditItem(don);
-    setDonationForm({
-      donation_date: don.donation_date,
-      status: don.status
-    });
+    setDonationForm({ donation_date: don.donation_date, status: don.status });
     setModal("editDonation");
   };
-
 
   const handleUpdateRequestStatus = async (id, newStatus) => {
     try {
       await api.updateBloodRequest(id, { status: newStatus });
       toast.success(`Broadcasting update: Request is now ${newStatus}`);
       setRequests(requests.map(r => r.id === id ? { ...r, status: newStatus } : r));
-    } catch (err) { 
-      toast.error(`Satellite link failed: ${err.message}`); 
-    }
+    } catch (err) { toast.error(`Satellite link failed: ${err.message}`); }
   };
 
   const handleUpdateDonationStatus = async (id, newStatus) => {
@@ -397,54 +633,65 @@ export default function AdminDashboard() {
       await api.updateDonation(id, { status: newStatus });
       toast.success(`Verification complete: Donation set to ${newStatus}`);
       setDonations(donations.map(d => d.id === id ? { ...d, status: newStatus } : d));
-    } catch (err) { 
-      toast.error(`Network sync failed: ${err.message}`); 
-    }
+    } catch (err) { toast.error(`Network sync failed: ${err.message}`); }
+  };
+
+  const handleUpdateUnits = async (id, units) => {
+    try {
+      await api.updateDonation(id, { units: parseInt(units) || 0 });
+      toast.success("Units updated");
+      setDonations(donations.map(d => d.id === id ? { ...d, units: parseInt(units) } : d));
+    } catch { toast.error("Sync failed"); }
   };
 
   const handleDeleteDonation = async (id) => {
-    if (!window.confirm("Delete this donation record?")) return;
-    try {
-      await api.deleteDonation(id);
-      toast.success("Donation deleted");
-    } catch { toast.success("Donation deleted locally"); }
-    setDonations(donations.filter(d => d.id !== id));
+    setConfirmAction({
+      title: "Purge Record",
+      message: "Permanently delete this donation entry? Clinical history will be adjusted.",
+      onConfirm: async () => {
+        try {
+          await api.deleteDonation(id);
+          toast.success("Donation deleted");
+          setDonations(donations.filter(d => d.id !== id));
+        } catch { toast.error("Purge failed"); }
+        setConfirmAction(null);
+      }
+    });
   };
 
   /* ── LOGOUT ── */
   const handleLogout = () => {
     localStorage.clear();
     toast.info("Logged out successfully");
-    setTimeout(() => navigate("/admin"), 800);
+    setTimeout(() => navigate("/login"), 800);
   };
 
   // Filtering Logic
-  const filteredUsers = users.filter(u => 
-    u.full_name?.toLowerCase().includes(search.toLowerCase()) || 
-    u.email?.toLowerCase().includes(search.toLowerCase()) ||
-    u.city?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredUsers = Array.isArray(users) ? users.filter(u =>
+    (u?.full_name || "").toLowerCase().includes((search || "").toLowerCase()) ||
+    (u?.email || "").toLowerCase().includes((search || "").toLowerCase()) ||
+    (u?.city || "").toLowerCase().includes((search || "").toLowerCase())
+  ) : [];
 
-  const filteredHospitals = hospitals.filter(h => 
-    h.name?.toLowerCase().includes(search.toLowerCase()) || 
-    h.city?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredHospitals = Array.isArray(hospitals) ? hospitals.filter(h =>
+    (h?.name || "").toLowerCase().includes((search || "").toLowerCase()) ||
+    (h?.city || "").toLowerCase().includes((search || "").toLowerCase())
+  ) : [];
 
-  const filteredRequests = requests.filter(r => 
-    r.city?.toLowerCase().includes(search.toLowerCase()) || 
-    r.blood_group?.toLowerCase().includes(search.toLowerCase()) ||
-    r.status?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredRequests = Array.isArray(requests) ? requests.filter(r =>
+    (r?.city || "").toLowerCase().includes((search || "").toLowerCase()) ||
+    (r?.blood_group || "").toLowerCase().includes((search || "").toLowerCase()) ||
+    (r?.status || "").toLowerCase().includes((search || "").toLowerCase())
+  ) : [];
 
-  const filteredDonations = donations.filter(d => {
-    const donor = users.find(u => u.id === d.donor_id);
+  const filteredDonations = Array.isArray(donations) ? donations.filter(d => {
+    const donor = users.find(u => u.id === d?.donor_id);
     return (
-      donor?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-      d.status?.toLowerCase().includes(search.toLowerCase())
+      (donor?.full_name || "").toLowerCase().includes((search || "").toLowerCase()) ||
+      (d?.status || "").toLowerCase().includes((search || "").toLowerCase())
     );
-  });
+  }) : [];
 
-  // Chart Data Preparation
   const getDonationTrend = () => {
     const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
     return days.map(d => ({ label: d, value: Math.floor(Math.random() * 20) + 5 }));
@@ -452,20 +699,20 @@ export default function AdminDashboard() {
 
   const getBloodGroupDist = () => {
     const groups = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
-    return groups.map(g => ({
-      label: g,
-      value: users.filter(u => u.blood_group === g).length
-    }));
+    return groups.map(g => ({ label: g, value: users.filter(u => u.blood_group === g).length }));
   };
 
   const pendingCount = requests.filter(r => r.status === "pending").length;
 
+  // Derive selected hospital name for map legend
+  const selectedHospitalName = hospitals.find(h => h.id === requestForm.hospital_id)?.name || "Hospital";
+
   if (loading) {
     return (
-      <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',background:'var(--bg-800)'}}>
-        <div style={{textAlign:'center'}}>
-          <div className="hemo-preloader-spinner" style={{marginBottom: 20}}></div>
-          <p style={{color:'var(--text-600)',fontWeight:600,letterSpacing:1}}>INITIALIZING COMMAND CENTRE</p>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: 'var(--bg-800)' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div className="hemo-preloader-spinner" style={{ marginBottom: 20 }}></div>
+          <p style={{ color: 'var(--text-600)', fontWeight: 600, letterSpacing: 1 }}>INITIALIZING COMMAND CENTRE</p>
         </div>
       </div>
     );
@@ -479,10 +726,10 @@ export default function AdminDashboard() {
       <aside className="admin-sidebar" data-aos="fade-right">
         <div className="admin-sidebar-header">
           <div className="admin-sidebar-brand">
-            <div className="hemo-logo-icon" style={{width: 32, height: 32, background:'var(--hemo-red)', borderRadius: 8, display:'flex', alignItems:'center', justifyContent:'center', color:'#fff'}}><Icons.Donations /></div>
+            <div className="hemo-logo-icon" style={{ width: 32, height: 32, background: 'var(--hemo-red)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}><Icons.Donations /></div>
             <div>
-              <h2 style={{marginLeft: 12}}>Hemo</h2>
-              <small style={{marginLeft: 12}}>Admin Portal</small>
+              <h2 style={{ marginLeft: 12 }}>Hemo</h2>
+              <small style={{ marginLeft: 12 }}>Admin Portal</small>
             </div>
           </div>
         </div>
@@ -494,7 +741,6 @@ export default function AdminDashboard() {
               <span className="nav-icon"><Icons.Overview /></span> <span>Dashboard</span>
             </button>
           </div>
-
           <div className="admin-nav-section">
             <div className="admin-nav-label">Management</div>
             <button className={`admin-nav-item ${tab === "users" ? "active" : ""}`} onClick={() => { setTab("users"); setSearch(""); }}>
@@ -506,11 +752,17 @@ export default function AdminDashboard() {
               <span className="nav-badge">{hospitals.length}</span>
             </button>
             <button className={`admin-nav-item ${tab === "requests" ? "active" : ""}`} onClick={() => { setTab("requests"); setSearch(""); }}>
-              <span className="nav-icon"><Icons.Requests /></span> <span>Blood Requests</span>
+              <span className="nav-icon"><Icons.Requests /></span> <span>Direct Requests</span>
               {pendingCount > 0 && <span className="nav-badge">{pendingCount}</span>}
             </button>
+            <button className={`admin-nav-item ${tab === "sos_pulse" ? "active" : ""}`} onClick={() => { setTab("sos_pulse"); setSearch(""); }}>
+              <span className="nav-icon"><Icons.ActivityAlert /></span> <span>SOS Real-time Pulse</span>
+            </button>
+            <button className={`admin-nav-item ${tab === "attendance" ? "active" : ""}`} onClick={() => { setTab("attendance"); setSearch(""); }}>
+              <span className="nav-icon"><Icons.DoneAll /></span> <span>Attendance & Units</span>
+            </button>
             <button className={`admin-nav-item ${tab === "donations" ? "active" : ""}`} onClick={() => { setTab("donations"); setSearch(""); }}>
-              <span className="nav-icon"><Icons.Donations /></span> <span>Donation Tracking</span>
+              <span className="nav-icon"><Icons.Donations /></span> <span>Donation History</span>
             </button>
           </div>
         </nav>
@@ -523,7 +775,7 @@ export default function AdminDashboard() {
               <div className="role">System Root</div>
             </div>
           </div>
-          <button className="admin-btn admin-btn-ghost" style={{width:'100%',marginTop:16,justifyContent:'center'}} onClick={handleLogout}>
+          <button className="admin-btn admin-btn-ghost" style={{ width: '100%', marginTop: 16, justifyContent: 'center' }} onClick={handleLogout}>
             <Icons.Logout /> <span>Sign Out</span>
           </button>
         </div>
@@ -533,24 +785,24 @@ export default function AdminDashboard() {
       <main className="admin-main">
         <div className="admin-topbar">
           <div>
-            <span className="section-tag" style={{marginBottom: 4, display:'block', fontSize:'0.7rem', color:'var(--hemo-red)', fontWeight:800, textTransform:'uppercase', letterSpacing:1.5}}>System Management</span>
-            <h1 style={{margin:0, fontSize:'1.6rem', fontWeight:900, color:'var(--text-100)'}}>{tab === "overview" ? "Control Centre Overview" : tab.toUpperCase()}</h1>
+            <span className="section-tag" style={{ marginBottom: 4, display: 'block', fontSize: '0.7rem', color: 'var(--hemo-red)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1.5 }}>System Management</span>
+            <h1 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 900, color: 'var(--text-100)' }}>{tab === "overview" ? "Control Centre Overview" : tab.toUpperCase()}</h1>
           </div>
           <div className="admin-topbar-actions">
             {tab !== "overview" && (
-              <div style={{position:'relative'}}>
-                <input 
-                  type="text" 
-                  className="hemo-input" 
-                  placeholder={`Search ${tab}...`} 
-                  style={{paddingLeft: 40, width: 280, height: 42, background:'#fff', border:'1px solid var(--glass-border)', borderRadius: 12}} 
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="text"
+                  className="hemo-input"
+                  placeholder={`Search ${tab}...`}
+                  style={{ paddingLeft: 40, width: 280, height: 42, background: '#fff', border: '1px solid var(--glass-border)', borderRadius: 12 }}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
-                <span style={{position:'absolute', left: 14, top:'50%', transform:'translateY(-50%)', opacity: 0.5}}><Icons.Search /></span>
+                <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}><Icons.Search /></span>
               </div>
             )}
-            <button className="admin-btn admin-btn-ghost" onClick={fetchAll} title="Refresh Data" style={{height: 42}}><Icons.Refresh /></button>
+            <button className="admin-btn admin-btn-ghost" onClick={fetchAll} title="Refresh Data" style={{ height: 42 }}><Icons.Refresh /></button>
           </div>
         </div>
 
@@ -559,7 +811,7 @@ export default function AdminDashboard() {
           {/* ─── OVERVIEW TAB ─── */}
           {tab === "overview" && (
             <>
-              <div className="admin-stats" style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(240px, 1fr))', gap: 24, marginBottom: 40}}>
+              <div className="admin-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 24, marginBottom: 40 }}>
                 <div className="admin-stat-card">
                   <div className="stat-icon red"><Icons.Users /></div>
                   <div className="stat-value">{users.length}</div>
@@ -582,7 +834,6 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* System Insights Charts */}
               <div className="admin-charts-grid">
                 <div className="admin-chart-card">
                   <div className="admin-chart-card-header">
@@ -593,10 +844,9 @@ export default function AdminDashboard() {
                   </div>
                   <SimpleAreaChart data={getDonationTrend()} />
                   <div className="admin-chart-legend">
-                    <div className="legend-item"><span className="legend-color" style={{background:'var(--hemo-red)'}}></span> Pledges Received</div>
+                    <div className="legend-item"><span className="legend-color" style={{ background: 'var(--hemo-red)' }}></span> Pledges Received</div>
                   </div>
                 </div>
-                
                 <div className="admin-chart-card">
                   <div className="admin-chart-card-header">
                     <div>
@@ -608,11 +858,10 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(400px, 1fr))', gap: 24}}>
-                {/* Recent Requests */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 24 }}>
                 <div className="admin-card">
-                  <div className="admin-card-header" style={{padding:'24px 32px', display:'flex', justifyContent:'space-between', alignItems:'center', borderBottom:'1px solid var(--bg-700)'}}>
-                    <h2 style={{margin:0, fontSize:'1.25rem', fontWeight:800}}>Active Blood Alerts</h2>
+                  <div className="admin-card-header" style={{ padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--bg-700)' }}>
+                    <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800 }}>Active Blood Alerts</h2>
                     <button className="admin-btn admin-btn-ghost admin-btn-sm" onClick={() => setTab("requests")}>Manage All</button>
                   </div>
                   <table className="admin-table">
@@ -625,17 +874,13 @@ export default function AdminDashboard() {
                           <td><span className={`admin-badge admin-badge-${r.status}`}>{r.status}</span></td>
                         </tr>
                       ))}
-                      {requests.length === 0 && (
-                        <tr><td colSpan="3" className="admin-empty">No active requests</td></tr>
-                      )}
+                      {requests.length === 0 && <tr><td colSpan="3" className="admin-empty">No active requests</td></tr>}
                     </tbody>
                   </table>
                 </div>
-
-                {/* Recent Users */}
                 <div className="admin-card">
-                  <div className="admin-card-header" style={{padding:'24px 32px', display:'flex', justifyContent:'space-between', alignItems:'center', borderBottom:'1px solid var(--bg-700)'}}>
-                    <h2 style={{margin:0, fontSize:'1.25rem', fontWeight:800}}>Latest Registrations</h2>
+                  <div className="admin-card-header" style={{ padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--bg-700)' }}>
+                    <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800 }}>Latest Registrations</h2>
                     <button className="admin-btn admin-btn-ghost admin-btn-sm" onClick={() => setTab("users")}>User Explorer</button>
                   </div>
                   <table className="admin-table">
@@ -657,62 +902,52 @@ export default function AdminDashboard() {
 
           {/* ─── USERS TAB ─── */}
           {tab === "users" && (
-            <>
-              <div style={{marginBottom: 24}}>
-                <button className="admin-btn admin-btn-primary" onClick={() => {
-                  setUserForm({ full_name: "", email: "", role: "donor", city: "", blood_group: "O+", password: "password123" });
-                  setModal("addUser");
-                }}><Icons.Plus /> Register New User</button>
+            <div className="admin-card">
+              <div className="admin-card-header">
+                <h2>System User Database ({filteredUsers.length})</h2>
               </div>
-              <div className="admin-card">
-                <div className="admin-card-header">
-                  <h2>System User Database ({filteredUsers.length})</h2>
-                </div>
-                <table className="admin-table">
-                  <thead>
-                    <tr><th>User Details</th><th>Identity</th><th>Blood Type</th><th>Location</th><th>Actions</th></tr>
-                  </thead>
-                  <tbody>
-                    {filteredUsers.map(u => (
-                      <tr key={u.id}>
-                        <td>
-                          <div style={{fontWeight:700, color:'var(--text-100)'}}>{u.full_name}</div>
-                          <div style={{fontSize:'0.75rem', opacity: 0.6}}>{u.email}</div>
-                        </td>
-                        <td><span className={`admin-badge admin-badge-${u.role}`}>{u.role}</span></td>
-                        <td><strong style={{color:'var(--hemo-red)'}}>{u.blood_group}</strong></td>
-                        <td>{u.city}</td>
-                        <td>
-                          {u.email === "admin@hemo.com" ? (
-                            <span style={{fontSize:'0.75rem', opacity:0.5, fontStyle:'italic'}}>System Restricted</span>
-                          ) : (
-                            <div style={{display:'flex',gap:6}}>
-                              <button className="admin-btn admin-btn-info admin-btn-sm" onClick={() => {
-                                setEditItem(u);
-                                setUserForm({ full_name: u.full_name, email: u.email, role: u.role, city: u.city, blood_group: u.blood_group });
-                                setModal("editUser");
-                              }}><Icons.Edit /></button>
-                              <button className="admin-btn admin-btn-danger admin-btn-sm" onClick={() => handleDeleteUser(u.id, u.full_name)}><Icons.Delete /></button>
-                            </div>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                    {filteredUsers.length === 0 && (
-                      <tr><td colSpan="5" className="admin-empty" style={{textAlign:'center', padding:40, color:'var(--text-600)'}}>No results matching your query</td></tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </>
+              <table className="admin-table">
+                <thead>
+                  <tr><th>User Details</th><th>Identity</th><th>Blood Type</th><th>Location</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                  {filteredUsers.map(u => (
+                    <tr key={u.id}>
+                      <td>
+                        <div style={{ fontWeight: 700, color: 'var(--text-100)' }}>{u.full_name}</div>
+                        <div style={{ fontSize: '0.75rem', opacity: 0.6 }}>{u.email}</div>
+                      </td>
+                      <td><span className={`admin-badge admin-badge-${u.role}`}>{u.role}</span></td>
+                      <td><strong style={{ color: 'var(--hemo-red)' }}>{u.blood_group}</strong></td>
+                      <td>{u.city}</td>
+                      <td>
+                        {u.email === "admin@hemo.com" ? (
+                          <span style={{ fontSize: '0.75rem', opacity: 0.5, fontStyle: 'italic' }}>System Restricted</span>
+                        ) : (
+                          <div style={{ display: 'flex', gap: 6 }}>
+                            <button className="admin-btn admin-btn-info admin-btn-sm" onClick={() => {
+                              setEditItem(u);
+                              setUserForm({ full_name: u.full_name, email: u.email, role: u.role, city: u.city || "", address: u.address || "", blood_group: u.blood_group || "O+" });
+                              setModal("editUser");
+                            }}><Icons.Edit /></button>
+                            <button className="admin-btn admin-btn-danger admin-btn-sm" onClick={() => handleDeleteUser(u.id, u.full_name)}><Icons.Delete /></button>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredUsers.length === 0 && <tr><td colSpan="5" className="admin-empty" style={{ textAlign: 'center', padding: 40, color: 'var(--text-600)' }}>No results matching your query</td></tr>}
+                </tbody>
+              </table>
+            </div>
           )}
 
           {/* ─── HOSPITALS TAB ─── */}
           {tab === "hospitals" && (
             <>
-              <div style={{marginBottom: 24}}>
+              <div style={{ marginBottom: 24 }}>
                 <button className="admin-btn admin-btn-primary" onClick={() => {
-                  setHospitalForm({ name: "", city: "", contact_number: "", email: "" });
+                  setHospitalForm({ name: "", city: "", contact_number: "", email: "", address: "" });
                   setModal("addHospital");
                 }}><Icons.Plus /> Register New Hospital Entity</button>
               </div>
@@ -728,16 +963,16 @@ export default function AdminDashboard() {
                     {filteredHospitals.map(h => (
                       <tr key={h.id}>
                         <td>
-                          <div style={{fontWeight:700}}>{h.name}</div>
-                          <div style={{fontSize:'0.75rem', opacity: 0.6}}>{h.email || "No email registered"}</div>
+                          <div style={{ fontWeight: 700 }}>{h.name}</div>
+                          <div style={{ fontSize: '0.75rem', opacity: 0.6 }}>{h.email || "No email registered"}</div>
                         </td>
                         <td>{h.city}</td>
                         <td>{h.contact_number || "Unavailable"}</td>
                         <td>
-                          <div style={{display:'flex',gap:6}}>
+                          <div style={{ display: 'flex', gap: 6 }}>
                             <button className="admin-btn admin-btn-info admin-btn-sm" onClick={() => {
                               setEditItem(h);
-                              setHospitalForm({ name: h.name, city: h.city, contact_number: h.contact_number || "", email: h.email || "" });
+                              setHospitalForm({ name: h.name, city: h.city, contact_number: h.contact_number || "", email: h.email || "", address: h.address || "" });
                               setModal("editHospital");
                             }}><Icons.Edit /></button>
                             <button className="admin-btn admin-btn-danger admin-btn-sm" onClick={() => handleDeleteHospital(h.id, h.name)}><Icons.Delete /></button>
@@ -745,9 +980,7 @@ export default function AdminDashboard() {
                         </td>
                       </tr>
                     ))}
-                    {filteredHospitals.length === 0 && (
-                        <tr><td colSpan="4" className="admin-empty" style={{textAlign:'center', padding:40, color:'var(--text-600)'}}>No facility found for this search</td></tr>
-                    )}
+                    {filteredHospitals.length === 0 && <tr><td colSpan="4" className="admin-empty" style={{ textAlign: 'center', padding: 40, color: 'var(--text-600)' }}>No facility found for this search</td></tr>}
                   </tbody>
                 </table>
               </div>
@@ -757,9 +990,14 @@ export default function AdminDashboard() {
           {/* ─── REQUESTS TAB ─── */}
           {tab === "requests" && (
             <>
-              <div style={{marginBottom: 24}}>
+              <div style={{ marginBottom: 24 }}>
                 <button className="admin-btn admin-btn-primary" onClick={() => {
-                  setRequestForm({ blood_group: "O+", city: "", units: 1, hospital_id: "", status: "pending" });
+                  setRequestForm({ blood_group: "O+", city: "", units: 1, hospital_id: "" });
+                  setModalStep(1);
+                  setSelectedDonor(null);
+                  setLogistics(null);
+                  setMapCoords(null);
+                  setShowMap(false);
                   setModal("addRequest");
                 }}><Icons.Plus /> Broadcast Smart SOS Request</button>
               </div>
@@ -774,45 +1012,128 @@ export default function AdminDashboard() {
                   <tbody>
                     {filteredRequests.map(r => (
                       <tr key={r?.id}>
-                        <td style={{fontFamily:'monospace',fontSize:'0.75rem',opacity:0.6}}>#{(r?.id || "").slice(-6).toUpperCase()}</td>
+                        <td style={{ fontFamily: 'monospace', fontSize: '0.75rem', opacity: 0.6 }}>#{(r?.id || "").slice(-6).toUpperCase()}</td>
                         <td>
                           {r?.patient_id ? (
-                            <div style={{fontWeight: 600}}>{users.find(u => u?.id === r.patient_id)?.full_name || "Unknown Patient"}</div>
+                            <div style={{ fontWeight: 600 }}>{users.find(u => u?.id === r.patient_id)?.full_name || "Unknown Patient"}</div>
                           ) : (
-                            <div style={{fontWeight: 600, color: 'var(--hemo-red)'}}>🏥 {hospitals.find(h => h?.id === r?.hospital_id)?.name || "System Alert"}</div>
+                            <div style={{ fontWeight: 600, color: 'var(--hemo-red)', display: 'flex', alignItems: 'center' }}><Icons.Hospitals size={14} style={{ marginRight: 4 }} /> {hospitals.find(h => h?.id === r?.hospital_id)?.name || "System Alert"}</div>
                           )}
                         </td>
-                        <td><strong style={{fontSize:'1.1rem', color:'var(--hemo-red)'}}>{r?.blood_group}</strong></td>
+                        <td><strong style={{ fontSize: '1.1rem', color: 'var(--hemo-red)' }}>{r?.blood_group}</strong></td>
                         <td>{r?.city}</td>
-                        <td><span className={`admin-badge admin-badge-${r?.status}`}>{r?.status}</span></td>
-                        <td style={{fontSize:'0.85rem'}}>{r?.created_at ? new Date(r.created_at).toLocaleDateString() : "—"}</td>
+                        <td><span className={`admin-badge admin-badge-${r?.status}`} style={{ fontWeight: 900, letterSpacing: 0.5 }}>{(r?.status || "").toUpperCase()}</span></td>
+                        <td style={{ fontSize: '0.85rem' }}>{r?.created_at ? new Date(r.created_at).toLocaleDateString() : "—"}</td>
                         <td>
-                            <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
-                              <button className="admin-btn admin-btn-ghost admin-btn-sm" onClick={() => handleEditRequest(r)} title="Edit Request"><Icons.Edit /></button>
-                              
-                              {r?.status === "pending" && (
-                                <button className="admin-btn admin-btn-success admin-btn-sm" onClick={() => handleUpdateRequestStatus(r?.id, "approved")} title="Verify Patient Need"><Icons.Check /> Verify Need</button>
-                              )}
-                              
-                              <button className="admin-btn admin-btn-danger admin-btn-sm" onClick={() => handleDeleteRequest(r.id)} title="Delete Request"><Icons.Delete /></button>
-                            </div>
+                          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                            <button className="admin-btn admin-btn-ghost admin-btn-sm" onClick={() => handleEditRequest(r)} title="Modify Alert Path"><Icons.Edit /></button>
+                            <button className="admin-btn admin-btn-danger admin-btn-sm" onClick={() => handleDeleteRequest(r.id)} title="Retract SOS Alert"><Icons.Delete /></button>
+                          </div>
                         </td>
                       </tr>
                     ))}
-                    {filteredRequests.length === 0 && (
-                      <tr><td colSpan="6" className="admin-empty" style={{textAlign:'center', padding:40, color:'var(--text-600)'}}>No active requests detected in this scope</td></tr>
-                    )}
+                    {filteredRequests.length === 0 && <tr><td colSpan="7" className="admin-empty" style={{ textAlign: 'center', padding: 40, color: 'var(--text-600)' }}>No active requests detected in this scope</td></tr>}
                   </tbody>
                 </table>
               </div>
             </>
           )}
 
+          {/* ─── SOS PULSE TAB ─── */}
+          {tab === "sos_pulse" && (
+            <div className="admin-card">
+              <div className="admin-card-header" style={{ padding: '24px 32px', borderBottom: '1px solid var(--bg-700)' }}>
+                <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800 }}>SOS Real-time Response Monitoring</h2>
+              </div>
+              <table className="admin-table">
+                <thead>
+                  <tr><th>SOS Reference</th><th>Node / Hospital</th><th>Target Blood</th><th>Pledged Donors</th><th>Action Status</th></tr>
+                </thead>
+                <tbody>
+                  {requests.map(r => {
+                    const hospital = hospitals.find(h => h.id === r.hospital_id);
+                    const matchedDonations = donations.filter(d => d.request_id === r.id);
+                    return (
+                      <tr key={r.id}>
+                        <td><code style={{ background: 'var(--bg-700)', padding: '2px 6px', borderRadius: 4, fontSize: '0.75rem' }}>#{(r.id || "").slice(-6).toUpperCase()}</code></td>
+                        <td>
+                          <div style={{ fontWeight: 700 }}>{hospital?.name || "System Request"}</div>
+                          <div style={{ fontSize: '0.7rem', opacity: 0.6 }}>{r.city}</div>
+                        </td>
+                        <td><span style={{ color: 'var(--hemo-red)', fontWeight: 900, fontSize: '1.1rem' }}>{r.blood_group}</span></td>
+                        <td>
+                          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                            {matchedDonations.length > 0 ? (
+                              <button className="admin-btn admin-btn-secondary admin-btn-sm" style={{ fontSize: '0.75rem', fontWeight: 800, padding: '4px 12px' }} onClick={() => { setEditItem(r); setModal("viewPledged"); }}>
+                                <Icons.Users size={14} style={{ marginRight: 6 }} />{matchedDonations.length} Pledged Donors
+                              </button>
+                            ) : <span style={{ opacity: 0.3, fontSize: '0.8rem' }}>No Handshakes</span>}
+                          </div>
+                        </td>
+                        <td><span className={`admin-badge admin-badge-${r?.status}`} style={{ fontWeight: 900, padding: '6px 16px' }}>{(r?.status || "").toUpperCase()}</span></td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* ─── ATTENDANCE TAB ─── */}
+          {tab === "attendance" && (
+            <div className="admin-card">
+              <div className="admin-card-header" style={{ padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--bg-700)' }}>
+                <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800 }}>Clinical Attendance Hub</h2>
+                <button className="admin-btn admin-btn-secondary admin-btn-sm" onClick={fetchAll}><Icons.Refresh /> Audit Hub Sync</button>
+              </div>
+              <table className="admin-table">
+                <thead>
+                  <tr><th>Donor Identity</th><th>Hospital Node</th><th>Pledge Date</th><th>Verified Units</th><th>Status Evolution</th></tr>
+                </thead>
+                <tbody>
+                  {donations.filter(d => d.status !== 'deleted').map(d => {
+                    const donor = users.find(u => u.id === d.donor_id);
+                    const request = requests.find(r => r.id === d.request_id);
+                    const hospital = hospitals.find(h => h.id === request?.hospital_id);
+                    const statusColors = {
+                      pledged: { bg: 'rgba(52,152,219,0.25)', text: '#2980b9', border: '#3498db' },
+                      completed: { bg: 'rgba(46,204,113,0.25)', text: '#27ae60', border: '#2ecc71' },
+                      cancelled: { bg: 'rgba(149,165,166,0.25)', text: '#7f8c8d', border: '#95a5a6' },
+                      absent: { bg: 'rgba(231,76,60,0.25)', text: '#c0392b', border: '#e74c3c' }
+                    };
+                    const currentStyle = statusColors[d.status] || statusColors.pledged;
+                    return (
+                      <tr key={d.id}>
+                        <td style={{ padding: '20px 32px' }}>
+                          <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>{donor?.full_name}</div>
+                          <div style={{ fontSize: '0.7rem', opacity: 0.5 }}>{donor?.blood_group} • {donor?.email}</div>
+                        </td>
+                        <td>{hospital?.name || "Life-Saving Node"}</td>
+                        <td>{d.donation_date}</td>
+                        <td>
+                          <input type="number" className="hemo-input" value={d.units || 0} onChange={(e) => handleUpdateUnits(d.id, e.target.value)} style={{ width: 80, height: 32, fontSize: '0.85rem', fontWeight: 800, textAlign: 'center' }} />
+                        </td>
+                        <td>
+                          <select className="hemo-input" value={d.status} onChange={(e) => handleUpdateDonationStatus(d.id, e.target.value)} style={{ width: '100%', height: 36, fontSize: '0.7rem', fontWeight: 900, background: currentStyle.bg, color: currentStyle.text, border: `2px solid ${currentStyle.border}`, borderRadius: 20, padding: '0 12px', textTransform: 'uppercase', textAlign: 'center', appearance: 'none', cursor: 'pointer', letterSpacing: 0.5 }}>
+                            <option value="pledged">Pledged</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="absent">Absent</option>
+                          </select>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
           {/* ─── DONATIONS TAB ─── */}
           {tab === "donations" && (
             <div className="admin-card">
-              <div className="admin-card-header">
-                <h2>Verified Donation Pledges ({filteredDonations.length})</h2>
+              <div className="admin-card-header" style={{ padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--bg-700)' }}>
+                <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800 }}>Verified Pledge Archives</h2>
               </div>
               <table className="admin-table">
                 <thead>
@@ -822,38 +1143,28 @@ export default function AdminDashboard() {
                   {filteredDonations.map(d => {
                     const donor = users.find(u => u?.id === d?.donor_id);
                     const targetReq = requests.find(r => r?.id === d?.request_id);
-                    const targetName = targetReq?.patient_id 
+                    const targetName = targetReq?.patient_id
                       ? (users.find(u => u?.id === targetReq.patient_id)?.full_name || "Patient ID: " + (targetReq.patient_id || "").slice(-4))
                       : (hospitals.find(h => h?.id === targetReq?.hospital_id)?.name || "General Network");
-                    
                     return (
                       <tr key={d?.id}>
                         <td>
                           <strong>{donor?.full_name || "Unknown Donor"}</strong>
-                          <div style={{fontSize: '0.7rem', opacity: 0.5}}>{donor?.blood_group || "N/A"}</div>
+                          <div style={{ fontSize: '0.7rem', opacity: 0.5 }}>{donor?.blood_group || "N/A"}</div>
                         </td>
                         <td>{d?.donation_date}</td>
                         <td>
-                          <div style={{fontWeight: 600}}>{targetName}</div>
-                          <div style={{fontSize: '0.7rem', opacity: 0.5}}>Ref: #{(d?.request_id || "GEN").slice(-6).toUpperCase()}</div>
+                          <div style={{ fontWeight: 600 }}>{targetName}</div>
+                          <div style={{ fontSize: '0.7rem', opacity: 0.5 }}>Ref: #{(d?.request_id || "GEN").slice(-6).toUpperCase()}</div>
                         </td>
                         <td><span className={`admin-badge admin-badge-${d?.status}`}>{d?.status}</span></td>
                         <td>
-                          <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
-                            <button className="admin-btn admin-btn-ghost admin-btn-sm" onClick={() => handleEditDonation(d)} title="Edit Record"><Icons.Edit /></button>
-                            
-                            {d.status === "pledged" && (
-                              <button className="admin-btn admin-btn-success admin-btn-sm" onClick={() => handleUpdateDonationStatus(d.id, "completed")} title="Verify Physical Donation"><Icons.Check /> Fulfill Contribution</button>
-                            )}
-                            <button className="admin-btn admin-btn-danger admin-btn-sm" onClick={() => handleDeleteDonation(d.id)}><Icons.Delete /></button>
-                          </div>
+                          <button className="admin-btn admin-btn-danger admin-btn-sm" onClick={() => handleDeleteDonation(d.id)}><Icons.Delete /></button>
                         </td>
                       </tr>
                     );
                   })}
-                  {filteredDonations.length === 0 && (
-                    <tr><td colSpan="5" className="admin-empty" style={{textAlign:'center', padding:40, color:'var(--text-600)'}}>No donation records found</td></tr>
-                  )}
+                  {filteredDonations.length === 0 && <tr><td colSpan="5" className="admin-empty" style={{ textAlign: 'center', padding: 40, color: 'var(--text-600)' }}>No archived pledges discovered</td></tr>}
                 </tbody>
               </table>
             </div>
@@ -862,76 +1173,45 @@ export default function AdminDashboard() {
         </div>
       </main>
 
-      {/* ═══ MODALS ═══ */}
-
-      {/* Add User Modal */}
-      {modal === "addUser" && (
-        <Modal title="Register New Member" onClose={() => setModal(null)}>
-          <div className="admin-modal-field" style={{marginBottom: 16}}>
-            <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Legal Full Name</label>
-            <input type="text" className="hemo-input" placeholder="e.g. David Tennant" value={userForm.full_name} onChange={e => setUserForm({...userForm, full_name: e.target.value})} style={{width: '100%'}} />
-          </div>
-          <div className="admin-modal-field" style={{marginBottom: 16}}>
-            <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Primary Email Address</label>
-            <input type="email" className="hemo-input" placeholder="e.g. member@email.com" value={userForm.email} onChange={e => setUserForm({...userForm, email: e.target.value})} style={{width: '100%'}} />
-          </div>
-          <div className="admin-modal-field" style={{marginBottom: 16}}>
-            <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Security Password</label>
-            <input type="password" className="hemo-input" placeholder="••••••••" value={userForm.password} onChange={e => setUserForm({...userForm, password: e.target.value})} style={{width: '100%'}} />
-          </div>
-          <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap: 12, marginBottom: 16}}>
-            <div className="admin-modal-field">
-              <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>System Role</label>
-              <select className="hemo-input" value={userForm.role} onChange={e => setUserForm({...userForm, role: e.target.value})} style={{width: '100%', height: 46}}>
-                <option value="donor">Donor (Hero)</option>
-                <option value="patient">Patient (Recipient)</option>
-                <option value="admin">Administrator</option>
-              </select>
-            </div>
-            <div className="admin-modal-field">
-              <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Blood Group</label>
-              <select className="hemo-input" value={userForm.blood_group} onChange={e => setUserForm({...userForm, blood_group: e.target.value})} style={{width: '100%', height: 46}}>
-                <option value="A+">A+</option><option value="A-">A-</option>
-                <option value="B+">B+</option><option value="B-">B-</option>
-                <option value="O+">O+</option><option value="O-">O-</option>
-                <option value="AB+">AB+</option><option value="AB-">AB-</option>
-              </select>
+      {/* ─── CONFIRMATION OVERLAY ─── */}
+      {confirmAction && (
+        <div className="admin-modal-overlay" style={{ zIndex: 9999 }}>
+          <div className="admin-modal" style={{ maxWidth: 400, textAlign: 'center', padding: 40 }}>
+            <div style={{ color: 'var(--hemo-red)', marginBottom: 20 }}><Icons.ActivityAlert size={64} /></div>
+            <h3 style={{ fontSize: '1.4rem', fontWeight: 900, marginBottom: 12, color: 'var(--text-100)' }}>{confirmAction.title}</h3>
+            <p style={{ opacity: 0.7, marginBottom: 32, lineHeight: 1.6 }}>{confirmAction.message}</p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button className="admin-btn admin-btn-ghost" style={{ flex: 1 }} onClick={() => setConfirmAction(null)}>Abort</button>
+              <button className="admin-btn admin-btn-danger" style={{ flex: 1 }} onClick={confirmAction.onConfirm}>Confirm Action</button>
             </div>
           </div>
-          <div className="admin-modal-field" style={{marginBottom: 24}}>
-            <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Operating City</label>
-            <input type="text" className="hemo-input" placeholder="e.g. Jaffna" value={userForm.city} onChange={e => setUserForm({...userForm, city: e.target.value})} style={{width: '100%'}} />
-          </div>
-          <div className="admin-modal-actions" style={{display:'flex', gap: 12, justifyContent:'flex-end'}}>
-            <button className="admin-btn admin-btn-ghost" onClick={() => setModal(null)}>Discard</button>
-            <button className="admin-btn admin-btn-primary" onClick={handleAddUser}>Finalize Registration</button>
-          </div>
-        </Modal>
+        </div>
       )}
+
+      {/* ═══ MODALS ═══ */}
 
       {/* Edit User Modal */}
       {modal === "editUser" && (
         <Modal title="Modify User Identity" onClose={() => { setModal(null); setEditItem(null); }}>
-          <div className="admin-modal-field" style={{marginBottom: 16}}>
-            <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Full Name</label>
-            <input type="text" className="hemo-input" value={userForm.full_name} onChange={e => setUserForm({...userForm, full_name: e.target.value})} style={{width: '100%'}} />
+          <div className="admin-modal-field" style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Full Name</label>
+            <input type="text" className="hemo-input" value={userForm.full_name} onChange={e => setUserForm({ ...userForm, full_name: e.target.value })} style={{ width: '100%' }} />
           </div>
-          <div className="admin-modal-field" style={{marginBottom: 16}}>
-            <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Email Address</label>
-            <input type="email" className="hemo-input" value={userForm.email} onChange={e => setUserForm({...userForm, email: e.target.value})} style={{width: '100%'}} />
+          <div className="admin-modal-field" style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Email Address</label>
+            <input type="email" className="hemo-input" value={userForm.email} onChange={e => setUserForm({ ...userForm, email: e.target.value })} style={{ width: '100%' }} />
           </div>
-          <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap: 12, marginBottom: 16}}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
             <div className="admin-modal-field">
-              <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>System Role</label>
-              <select className="hemo-input" value={userForm.role} onChange={e => setUserForm({...userForm, role: e.target.value})} style={{width: '100%', height: 46}}>
+              <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>System Role</label>
+              <select className="hemo-input" value={userForm.role} onChange={e => setUserForm({ ...userForm, role: e.target.value })} style={{ width: '100%', height: 46 }}>
                 <option value="donor">Donor</option>
-                <option value="patient">Patient</option>
                 <option value="admin">Admin</option>
               </select>
             </div>
             <div className="admin-modal-field">
-              <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Blood Group</label>
-              <select className="hemo-input" value={userForm.blood_group} onChange={e => setUserForm({...userForm, blood_group: e.target.value})} style={{width: '100%', height: 46}}>
+              <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Blood Group</label>
+              <select className="hemo-input" value={userForm.blood_group} onChange={e => setUserForm({ ...userForm, blood_group: e.target.value })} style={{ width: '100%', height: 46 }}>
                 <option value="A+">A+</option><option value="A-">A-</option>
                 <option value="B+">B+</option><option value="B-">B-</option>
                 <option value="O+">O+</option><option value="O-">O-</option>
@@ -939,13 +1219,88 @@ export default function AdminDashboard() {
               </select>
             </div>
           </div>
-          <div className="admin-modal-field" style={{marginBottom: 24}}>
-            <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>City</label>
-            <input type="text" className="hemo-input" value={userForm.city} onChange={e => setUserForm({...userForm, city: e.target.value})} style={{width: '100%'}} />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
+            <div className="admin-modal-field">
+              <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>City</label>
+              <input type="text" className="hemo-input" value={userForm.city} onChange={e => setUserForm({ ...userForm, city: e.target.value })} style={{ width: '100%' }} />
+            </div>
+            <div className="admin-modal-field">
+              <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Address</label>
+              <input type="text" className="hemo-input" value={userForm.address || ""} onChange={e => setUserForm({ ...userForm, address: e.target.value })} style={{ width: '100%' }} />
+            </div>
           </div>
-          <div className="admin-modal-actions" style={{display:'flex', gap: 12, justifyContent:'flex-end'}}>
+          <div className="admin-modal-actions" style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
             <button className="admin-btn admin-btn-ghost" onClick={() => { setModal(null); setEditItem(null); }}>Cancel</button>
             <button className="admin-btn admin-btn-primary" onClick={handleEditUser}>Commit Changes</button>
+          </div>
+        </Modal>
+      )}
+
+      {/* Edit Request Modal */}
+      {modal === "editRequest" && (
+        <Modal title="Modify SOS Node Alert" onClose={() => setModal(null)}>
+          <div className="admin-modal-field" style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Emergency Blood Type</label>
+            <select className="hemo-input" value={requestForm.blood_group} onChange={e => setRequestForm({ ...requestForm, blood_group: e.target.value })} style={{ width: '100%', height: 46 }}>
+              {['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'].map(bg => <option key={bg} value={bg}>{bg}</option>)}
+            </select>
+          </div>
+          <div className="admin-modal-field" style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Sector City</label>
+            <input type="text" className="hemo-input" value={requestForm.city} onChange={e => setRequestForm({ ...requestForm, city: e.target.value })} style={{ width: '100%' }} />
+          </div>
+          <div className="admin-modal-field" style={{ marginBottom: 24 }}>
+            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Operational Status</label>
+            <select className="hemo-input" value={requestForm.status} onChange={e => setRequestForm({ ...requestForm, status: e.target.value })} style={{ width: '100%', height: 46 }}>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved (Live Alert)</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div className="admin-modal-actions" style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+            <button className="admin-btn admin-btn-ghost" onClick={() => setModal(null)}>Discard</button>
+            <button className="admin-btn admin-btn-primary" onClick={async () => {
+              try {
+                await api.updateBloodRequest(editItem.id, requestForm);
+                toast.success("SOS Alert synchronized");
+                fetchAll();
+                setModal(null);
+              } catch { toast.error("Hub Sync failed"); }
+            }}>Modify SOS Node</button>
+          </div>
+        </Modal>
+      )}
+
+      {/* View Pledged Donors Modal */}
+      {modal === "viewPledged" && (
+        <Modal title={`Pledged Donors for Alert #${(editItem?.id || "").slice(-6).toUpperCase()}`} onClose={() => setModal(null)}>
+          <div style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+            <table className="admin-table" style={{ width: '100%' }}>
+              <thead>
+                <tr><th>Donor Detail</th><th>Contact Info</th><th>Blood Group</th></tr>
+              </thead>
+              <tbody>
+                {donations.filter(d => d.request_id === editItem?.id).map(don => {
+                  const donor = users.find(u => u.id === don.donor_id);
+                  return (
+                    <tr key={don.id}>
+                      <td>
+                        <div style={{ fontWeight: 700 }}>{donor?.full_name || "Unknown Donor"}</div>
+                        <div style={{ fontSize: '0.7rem', opacity: 0.6 }}>{donor?.city} • Sri Lanka</div>
+                      </td>
+                      <td>
+                        <div style={{ fontSize: '0.85rem' }}>{donor?.email}</div>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--hemo-red)', fontWeight: 600 }}>{donor?.phone || "No Phone"}</div>
+                      </td>
+                      <td><span style={{ color: 'var(--hemo-red)', fontWeight: 800 }}>{donor?.blood_group}</span></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <div className="admin-modal-actions" style={{ marginTop: 24, textAlign: 'right' }}>
+            <button className="admin-btn admin-btn-primary" onClick={() => setModal(null)}>Close Inspector</button>
           </div>
         </Modal>
       )}
@@ -953,23 +1308,27 @@ export default function AdminDashboard() {
       {/* Hospital Modals */}
       {modal === "addHospital" && (
         <Modal title="Onboard New Facility" onClose={() => setModal(null)}>
-          <div className="admin-modal-field" style={{marginBottom: 16}}>
-            <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Official Name</label>
-            <input type="text" className="hemo-input" placeholder="e.g. LifeCare Central" value={hospitalForm.name} onChange={e => setHospitalForm({...hospitalForm, name: e.target.value})} style={{width: '100%'}} />
+          <div className="admin-modal-field" style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Official Name</label>
+            <input type="text" className="hemo-input" placeholder="e.g. LifeCare Central" value={hospitalForm.name} onChange={e => setHospitalForm({ ...hospitalForm, name: e.target.value })} style={{ width: '100%' }} />
           </div>
-          <div className="admin-modal-field" style={{marginBottom: 16}}>
-            <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Location City</label>
-            <input type="text" className="hemo-input" placeholder="e.g. Jaffna" value={hospitalForm.city} onChange={e => setHospitalForm({...hospitalForm, city: e.target.value})} style={{width: '100%'}} />
+          <div className="admin-modal-field" style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Location City</label>
+            <input type="text" className="hemo-input" placeholder="e.g. Jaffna" value={hospitalForm.city} onChange={e => setHospitalForm({ ...hospitalForm, city: e.target.value })} style={{ width: '100%' }} />
           </div>
-          <div className="admin-modal-field" style={{marginBottom: 16}}>
-            <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Emergency Contact</label>
-            <input type="text" className="hemo-input" placeholder="e.g. 021-XXXXXXX" value={hospitalForm.contact_number} onChange={e => setHospitalForm({...hospitalForm, contact_number: e.target.value})} style={{width: '100%'}} />
+          <div className="admin-modal-field" style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Emergency Contact</label>
+            <input type="text" className="hemo-input" placeholder="e.g. 021-XXXXXXX" value={hospitalForm.contact_number} onChange={e => setHospitalForm({ ...hospitalForm, contact_number: e.target.value })} style={{ width: '100%' }} />
           </div>
-          <div className="admin-modal-field" style={{marginBottom: 24}}>
-            <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Facility Email</label>
-            <input type="email" className="hemo-input" placeholder="e.g. connect@facility.lk" value={hospitalForm.email} onChange={e => setHospitalForm({...hospitalForm, email: e.target.value})} style={{width: '100%'}} />
+          <div className="admin-modal-field" style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Facility Email</label>
+            <input type="email" className="hemo-input" placeholder="e.g. connect@facility.lk" value={hospitalForm.email} onChange={e => setHospitalForm({ ...hospitalForm, email: e.target.value })} style={{ width: '100%' }} />
           </div>
-          <div className="admin-modal-actions" style={{display:'flex', gap: 12, justifyContent:'flex-end'}}>
+          <div className="admin-modal-field" style={{ marginBottom: 24 }}>
+            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Facility Address</label>
+            <input type="text" className="hemo-input" placeholder="e.g. 123 Main St" value={hospitalForm.address || ""} onChange={e => setHospitalForm({ ...hospitalForm, address: e.target.value })} style={{ width: '100%' }} />
+          </div>
+          <div className="admin-modal-actions" style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
             <button className="admin-btn admin-btn-ghost" onClick={() => setModal(null)}>Cancel</button>
             <button className="admin-btn admin-btn-primary" onClick={handleAddHospital}>Verify & Add</button>
           </div>
@@ -978,115 +1337,184 @@ export default function AdminDashboard() {
 
       {modal === "editHospital" && (
         <Modal title="Update Facility Details" onClose={() => { setModal(null); setEditItem(null); }}>
-          <div className="admin-modal-field" style={{marginBottom: 16}}>
-            <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Hospital Name</label>
-            <input type="text" className="hemo-input" value={hospitalForm.name} onChange={e => setHospitalForm({...hospitalForm, name: e.target.value})} style={{width: '100%'}} />
+          <div className="admin-modal-field" style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Hospital Name</label>
+            <input type="text" className="hemo-input" value={hospitalForm.name} onChange={e => setHospitalForm({ ...hospitalForm, name: e.target.value })} style={{ width: '100%' }} />
           </div>
-          <div className="admin-modal-field" style={{marginBottom: 16}}>
-            <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>City</label>
-            <input type="text" className="hemo-input" value={hospitalForm.city} onChange={e => setHospitalForm({...hospitalForm, city: e.target.value})} style={{width: '100%'}} />
+          <div className="admin-modal-field" style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>City</label>
+            <input type="text" className="hemo-input" value={hospitalForm.city} onChange={e => setHospitalForm({ ...hospitalForm, city: e.target.value })} style={{ width: '100%' }} />
           </div>
-          <div className="admin-modal-field" style={{marginBottom: 16}}>
-            <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Secure Contact</label>
-            <input type="text" className="hemo-input" value={hospitalForm.contact_number} onChange={e => setHospitalForm({...hospitalForm, contact_number: e.target.value})} style={{width: '100%'}} />
+          <div className="admin-modal-field" style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Secure Contact</label>
+            <input type="text" className="hemo-input" value={hospitalForm.contact_number} onChange={e => setHospitalForm({ ...hospitalForm, contact_number: e.target.value })} style={{ width: '100%' }} />
           </div>
-          <div className="admin-modal-field" style={{marginBottom: 24}}>
-            <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Facility Email</label>
-            <input type="email" className="hemo-input" value={hospitalForm.email} onChange={e => setHospitalForm({...hospitalForm, email: e.target.value})} style={{width: '100%'}} />
+          <div className="admin-modal-field" style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Facility Email</label>
+            <input type="email" className="hemo-input" value={hospitalForm.email} onChange={e => setHospitalForm({ ...hospitalForm, email: e.target.value })} style={{ width: '100%' }} />
           </div>
-          <div className="admin-modal-actions" style={{display:'flex', gap: 12, justifyContent:'flex-end'}}>
+          <div className="admin-modal-field" style={{ marginBottom: 24 }}>
+            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Facility Address</label>
+            <input type="text" className="hemo-input" value={hospitalForm.address || ""} onChange={e => setHospitalForm({ ...hospitalForm, address: e.target.value })} style={{ width: '100%' }} />
+          </div>
+          <div className="admin-modal-actions" style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
             <button className="admin-btn admin-btn-ghost" onClick={() => { setModal(null); setEditItem(null); }}>Discard</button>
             <button className="admin-btn admin-btn-primary" onClick={handleEditHospital}>Save Modification</button>
           </div>
         </Modal>
       )}
 
+      {/* ─── SOS BROADCAST MODAL ─── */}
       {modal === "addRequest" && (
-        <Modal title="Broadcast Smart SOS Request" onClose={() => setModal(null)}>
-          <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap: 12, marginBottom: 16}}>
-            <div className="admin-modal-field">
-              <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Origin Hospital</label>
-              <select 
-                className="hemo-input" 
-                value={requestForm.hospital_id} 
-                onChange={e => setRequestForm({...requestForm, hospital_id: e.target.value})}
-                style={{width: '100%', height: 46}}
-              >
-                <option value="">Select Facility...</option>
-                {hospitals.map(h => (
-                  <option key={h.id} value={h.id}>{h.name} ({h.city})</option>
-                ))}
-              </select>
-            </div>
-            <div className="admin-modal-field">
-              <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Blood Type Needed</label>
-              <select className="hemo-input" value={requestForm.blood_group} onChange={e => setRequestForm({...requestForm, blood_group: e.target.value})} style={{width: '100%', height: 46}}>
-                <option value="A+">A+</option><option value="A-">A-</option>
-                <option value="B+">B+</option><option value="B-">B-</option>
-                <option value="O+">O+</option><option value="O-">O-</option>
-                <option value="AB+">AB+</option><option value="AB-">AB-</option>
-              </select>
-            </div>
-          </div>
+        <Modal title="Broadcast Smart SOS Request" onClose={() => { setModal(null); setShowMap(false); setMapCoords(null); setSelectedDonor(null); }}>
+          {modalStep === 1 && (
+            <>
+              <div className="admin-modal-field" style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Origin Hospital</label>
+                <select className="hemo-input" value={requestForm.hospital_id} onChange={e => setRequestForm({ ...requestForm, hospital_id: e.target.value })} style={{ width: '100%', height: 46 }}>
+                  <option value="">Select Facility...</option>
+                  {hospitals.map(h => <option key={h.id} value={h.id}>{h.name} ({h.city})</option>)}
+                </select>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+                <div className="admin-modal-field">
+                  <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Blood Type Needed</label>
+                  <select className="hemo-input" value={requestForm.blood_group} onChange={e => setRequestForm({ ...requestForm, blood_group: e.target.value })} style={{ width: '100%', height: 46 }}>
+                    <option value="A+">A+</option><option value="A-">A-</option>
+                    <option value="B+">B+</option><option value="B-">B-</option>
+                    <option value="O+">O+</option><option value="O-">O-</option>
+                    <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                  </select>
+                </div>
+                <div className="admin-modal-field">
+                  <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-400)' }}>Required Units</label>
+                  <input type="number" className="hemo-input" min="1" max="50" value={requestForm.units} onChange={e => setRequestForm({ ...requestForm, units: parseInt(e.target.value) || 0 })} style={{ width: '100%', height: 46 }} />
+                </div>
+              </div>
+              <div className="admin-modal-actions" style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 24 }}>
+                <button className="admin-btn admin-btn-ghost" onClick={() => { setModal(null); setShowMap(false); setMapCoords(null); }}>Close</button>
+                <button className="admin-btn admin-btn-primary" onClick={() => setModalStep(2)} disabled={!requestForm.hospital_id}>Next: Find Matches</button>
+              </div>
+            </>
+          )}
 
-          <div className="admin-modal-field" style={{marginBottom: 20}}>
-            <label style={{display:'block', marginBottom: 8, fontSize:'0.85rem', fontWeight:700, color:'var(--text-400)'}}>Required Units</label>
-            <input 
-              type="number" className="hemo-input" min="1" max="50" 
-              value={requestForm.units} 
-              onChange={e => setRequestForm({...requestForm, units: parseInt(e.target.value) || 0})} 
-              style={{width: '100%'}} 
-            />
-          </div>
+          {modalStep === 2 && (
+            <>
+              <div className="admin-match-card" style={{ background: 'var(--bg-700)', padding: 16, borderRadius: 12, marginBottom: 24 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--hemo-red)', textTransform: 'uppercase', display: 'flex', alignItems: 'center' }}>
+                    <Icons.ActivityAlert size={14} style={{ marginRight: 6 }} /> Live Match Explorer
+                  </span>
+                  <span style={{ fontSize: '0.75rem', opacity: 0.6 }}>Sector: {hospitals.find(h => h.id === requestForm.hospital_id)?.city}</span>
+                </div>
 
-          {/* Live Matching Dashboard */}
-          <div className="admin-match-card" style={{background: 'var(--bg-700)', padding: 16, borderRadius: 12, marginBottom: 24}}>
-            <div style={{display:'flex', justifyContent:'space-between', marginBottom: 12}}>
-              <span style={{fontSize: '0.75rem', fontWeight: 800, color: 'var(--hemo-red)', textTransform: 'uppercase'}}>🛰️ Live Match Explorer</span>
-              <span style={{fontSize: '0.75rem', opacity: 0.6}}>
-                {hospitals.find(h => h.id === requestForm.hospital_id)?.city || "Awaiting Node Selection..."}
-              </span>
-            </div>
-            
-            <div style={{maxHeight: 140, overflowY: 'auto'}}>
-              {hospitals.find(h => h.id === requestForm.hospital_id) ? (
-                (() => {
-                  const h = hospitals.find(h => h.id === requestForm.hospital_id);
-                  const matches = users.filter(u => 
-                    u && u.role === "donor" && 
-                    u.blood_group === requestForm.blood_group && 
-                    u.city?.toLowerCase() === h?.city?.toLowerCase()
-                  );
-                  
-                  if (matches.length > 0) {
-                    return matches.map(m => (
-                      <div key={m?.id} style={{display:'flex', justifyContent:'space-between', padding: '8px 4px', borderBottom: '1px solid rgba(255,255,255,0.05)'}}>
-                        <div style={{fontSize: '0.85rem', fontWeight: 600}}>{m?.full_name}</div>
-                        <div style={{fontSize: '0.8rem', opacity: 0.5}}>{m?.blood_group} | Verified</div>
-                      </div>
-                    ));
-                  }
-                  return <div style={{padding: 12, textAlign: 'center', opacity: 0.4, fontSize: '0.85rem'}}>No matching donors detected in this sector</div>;
-                })()
-              ) : (
-                <div style={{padding: 12, textAlign: 'center', opacity: 0.4, fontSize: '0.85rem'}}>Select a hospital to start scan...</div>
+                <div style={{ maxHeight: 200, overflowY: 'auto' }}>
+                  {(() => {
+                    const h = hospitals.find(h => h.id === requestForm.hospital_id);
+                    const matches = users.filter(u =>
+                      u && u.role === "donor" &&
+                      u.blood_group === requestForm.blood_group &&
+                      u.city?.toLowerCase() === h?.city?.toLowerCase()
+                    );
+                    if (matches.length > 0) {
+                      return matches.map(m => (
+                        <div
+                          key={m?.id}
+                          onClick={() => handleGetLogistics(m)}
+                          style={{
+                            display: 'flex', justifyContent: 'space-between', padding: '12px 10px',
+                            borderBottom: '1px solid rgba(255,255,255,0.05)', cursor: 'pointer',
+                            background: selectedDonor?.id === m?.id ? 'rgba(230,57,70,0.1)' : 'transparent',
+                            borderRadius: 8, transition: '0.2s'
+                          }}
+                        >
+                          <div>
+                            <div style={{ fontSize: '0.9rem', fontWeight: 700 }}>{m?.full_name}</div>
+                            <div style={{ fontSize: '0.7rem', opacity: 0.5 }}>{m?.address || m?.city} • Bio-Verified</div>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--hemo-red)', fontWeight: 800 }}>{m?.blood_group}</div>
+                            <div style={{ fontSize: '0.7rem', opacity: 0.6 }}>
+                              {selectedDonor?.id === m?.id && logistics
+                                ? `${logistics.distance} km • ${logistics.duration} min`
+                                : 'Click for route'}
+                            </div>
+                          </div>
+                        </div>
+                      ));
+                    }
+                    return <div style={{ padding: 24, textAlign: 'center', opacity: 0.4, fontSize: '0.85rem' }}>No matching donors detected in this sector</div>;
+                  })()}
+                </div>
+              </div>
+
+              {/* Logistics card — now includes map toggle */}
+              {selectedDonor && (
+                <div style={{ background: 'rgba(230,57,70,0.05)', border: '1px solid var(--hemo-red)', padding: 16, borderRadius: 12, marginBottom: 24 }}>
+                  <div style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--hemo-red)', marginBottom: 8 }}>
+                    Route Logistics Tracker
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                    <div>
+                      <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>{logistics ? `${logistics.distance} KM` : 'Calculating...'}</div>
+                      <div style={{ fontSize: '0.75rem', opacity: 0.6 }}>Satellite Distance</div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>{logistics ? `${logistics.duration} MINS` : '...'}</div>
+                      <div style={{ fontSize: '0.75rem', opacity: 0.6 }}>Est. Arrival Time</div>
+                    </div>
+                    {/* Map toggle button */}
+                    {mapCoords && (
+                      <button
+                        className="admin-btn admin-btn-ghost admin-btn-sm"
+                        onClick={() => setShowMap(v => !v)}
+                        style={{
+                          border: `1px solid ${showMap ? 'var(--hemo-red)' : 'rgba(255,255,255,0.15)'}`,
+                          color: showMap ? 'var(--hemo-red)' : 'rgba(255,255,255,0.6)',
+                          display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 8
+                        }}
+                        title={showMap ? "Hide map" : "Show on map"}
+                      >
+                        {/* Map pin SVG icon */}
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
+                        </svg>
+                        {showMap ? 'Hide Map' : 'Show Map'}
+                      </button>
+                    )}
+                  </div>
+                  <button
+                    className="admin-btn admin-btn-ghost admin-btn-sm"
+                    style={{ width: '100%', color: 'var(--hemo-red)' }}
+                    onClick={() => handleBroadcastSOS(selectedDonor)}
+                    disabled={isBroadcasting}
+                  >
+                    Send Direct SOS to {selectedDonor.full_name}
+                  </button>
+                </div>
               )}
-            </div>
-          </div>
 
-          <div className="admin-modal-actions" style={{display:'flex', gap: 12, justifyContent:'flex-end'}}>
-            <button className="admin-btn admin-btn-ghost" onClick={() => setModal(null)} disabled={isBroadcasting}>Abort</button>
-            <button 
-              className="admin-btn admin-btn-primary" 
-              onClick={handleBroadcastSOS}
-              disabled={isBroadcasting || !requestForm.hospital_id}
-              style={{flex: 1}}
-            >
-              {isBroadcasting ? "Broadcasting SOS..." : `Broadcast SOS Alert (${users.filter(u => u && u.role === "donor" && u.blood_group === requestForm.blood_group && u.city?.toLowerCase() === hospitals.find(h=>h.id === requestForm.hospital_id)?.city?.toLowerCase()).length} Donors)`}
-            </button>
-          </div>
+              <div className="admin-modal-actions" style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+                <button className="admin-btn admin-btn-ghost" onClick={() => { setModalStep(1); setSelectedDonor(null); setMapCoords(null); setShowMap(false); }}>Back</button>
+                <button className="admin-btn admin-btn-primary" onClick={() => handleBroadcastSOS()} disabled={isBroadcasting} style={{ flex: 1, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 900 }}>
+                  {isBroadcasting ? "Broadcasting SOS..." : "Confirm & Broadcast Approved SOS"}
+                </button>
+              </div>
+            </>
+          )}
         </Modal>
       )}
+
+      {/* ─── FLOATING LEAFLET MAP PANEL ─── */}
+      {showMap && mapCoords && (
+        <LeafletRouteMap
+          mapCoords={mapCoords}
+          hospitalName={selectedHospitalName}
+          donorName={selectedDonor?.full_name || "Donor"}
+          onClose={() => setShowMap(false)}
+        />
+      )}
+
     </div>
   );
 }

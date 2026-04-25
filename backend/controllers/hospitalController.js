@@ -35,7 +35,7 @@ const getHospitalById = async (req, res) => {
 
 // CREATE a new hospital
 const createHospital = async (req, res) => {
-  const { name, city, contact_number, email } = req.body;
+  const { name, city, contact_number, email, address } = req.body;
 
   if (!name || !city) {
     return res.status(400).json({ error: "`name` and `city` are required" });
@@ -47,6 +47,7 @@ const createHospital = async (req, res) => {
       city,
       contact_number: contact_number || null,
       email: email || null,
+      address: address || null,
     };
 
     const { data, error } = await supabase
@@ -68,7 +69,7 @@ const createHospital = async (req, res) => {
 // UPDATE a hospital
 const updateHospital = async (req, res) => {
   const { id } = req.params;
-  const { name, city, contact_number, email } = req.body;
+  const { name, city, contact_number, email, address } = req.body;
 
   try {
     const updatePayload = {};
@@ -76,6 +77,7 @@ const updateHospital = async (req, res) => {
     if (city !== undefined) updatePayload.city = city;
     if (contact_number !== undefined) updatePayload.contact_number = contact_number;
     if (email !== undefined) updatePayload.email = email;
+    if (address !== undefined) updatePayload.address = address;
 
     if (Object.keys(updatePayload).length === 0) {
       return res.status(400).json({ error: "No fields provided to update" });

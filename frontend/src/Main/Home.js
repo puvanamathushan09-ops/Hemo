@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "../hemo.css";
 import "./Home.css";
+import { Icons } from "../components/Icons";
+import { api } from "../utils/api";
 import img3 from "../assets/img/blood-5053771.webp";
 import img4 from "../assets/img/Blood7.webp";
 import img5 from "../assets/img/GITAM Drone.webp";
@@ -56,8 +58,31 @@ function HemoLogoSVG({ size = 36 }) {
 
 export default function Home() {
   const [slideIdx, setSlideIdx] = useState(0);
+  const [stats, setStats] = useState({
+    donors: 0,
+    matches: 0,
+    hospitals: 0
+  });
+
+  const fetchLiveStats = async () => {
+    try {
+      const [u, d, h] = await Promise.all([
+        api.getAllUsers(),
+        api.getDonations(),
+        api.getHospitals()
+      ]);
+      setStats({
+        donors: Array.isArray(u) ? u.filter(user => user.role === 'donor').length : 0,
+        matches: Array.isArray(d) ? d.filter(don => don.status === 'completed').length : 0,
+        hospitals: Array.isArray(h) ? h.length : 0
+      });
+    } catch (err) {
+      console.warn("Live stats fetch failed, using fallback");
+    }
+  };
 
   useEffect(() => {
+    fetchLiveStats();
     const timer = setInterval(() => {
       setSlideIdx((prev) => (prev + 1) % slidesData.length);
     }, 5000);
@@ -95,12 +120,11 @@ export default function Home() {
       {/* ═══ LIVE ALERTS MARQUEE (Relocated Phase 26) ═══ */}
       <div className="hemo-marquee">
         <div className="marquee-content highlight">
-          <span className="marquee-item">🚨 <strong>URGENT:</strong> O- Negative needed in Colombo General Hospital</span>
-          <span className="marquee-item">🩸 <strong>RECENT:</strong> 5 Units of A+ Successful Donation in Jaffna Hub</span>
-          <span className="marquee-item">🛡️ <strong>SECURE:</strong> 12,450+ Connections Verified Today</span>
-          <span className="marquee-item">📢 <strong>NOTICE:</strong> Network Expand to Anuradhapura Region</span>
-          <span className="marquee-item">🚨 <strong>URGENT:</strong> O- Negative needed in Colombo General Hospital</span>
-          <span className="marquee-item">🩸 <strong>RECENT:</strong> 5 Units of A+ Successful Donation in Jaffna Hub</span>
+          <span className="marquee-item"><Icons.ActivityAlert size={16} style={{marginRight:6, display:'inline-block', verticalAlign:'text-bottom'}} /> <strong>REAL-TIME:</strong> Network Monitoring Active for {stats.hospitals} Clinical Hubs</span>
+          <span className="marquee-item"><Icons.Drop size={16} style={{marginRight:6, display:'inline-block', verticalAlign:'text-bottom'}} /> <strong>UPDATE:</strong> {stats.donors}+ Verified Heroes Ready for SOS Dispatch</span>
+          <span className="marquee-item"><Icons.Shield size={16} style={{marginRight:6, display:'inline-block', verticalAlign:'text-bottom'}} /> <strong>SECURE:</strong> Clinical Verification Protocols Enforced District-Wide</span>
+          <span className="marquee-item"><Icons.MessageSquare size={16} style={{marginRight:6, display:'inline-block', verticalAlign:'text-bottom'}} /> <strong>NOTICE:</strong> Emergency Handshakes are now 100% Automated</span>
+          <span className="marquee-item"><Icons.ActivityAlert size={16} style={{marginRight:6, display:'inline-block', verticalAlign:'text-bottom'}} /> <strong>REAL-TIME:</strong> Network Monitoring Active for {stats.hospitals} Clinical Hubs</span>
         </div>
       </div>
 
@@ -129,15 +153,15 @@ export default function Home() {
             </p>
 
             <div className="hero-btns" data-aos="fade-up" data-aos-delay="300">
-              <Link to="/donate" className="hemo-btn-primary" id="hero-donate">🩸 Donate Blood</Link>
-              <Link to="/request" className="hemo-btn-secondary" id="hero-request">📋 Request Blood</Link>
+              <Link to="/donate" className="hemo-btn-primary" id="hero-donate" style={{display:'inline-flex', alignItems:'center', gap:'8px'}}><Icons.Drop size={18}/> Donate Blood</Link>
+              <Link to="/request" className="hemo-btn-secondary" id="hero-request" style={{display:'inline-flex', alignItems:'center', gap:'8px'}}><Icons.Clipboard size={18}/> Request Blood</Link>
             </div>
 
             <div className="hero-stats" data-aos="fade-up" data-aos-delay="400">
               {[
-                { val: 2450, sfx: "+", lbl: "Active Donors" },
-                { val: 1800, sfx: "+", lbl: "Matches Completed" },
-                { val: 12, sfx: "", lbl: "Major Cities" },
+                { val: stats.donors, sfx: "+", lbl: "Active Donors" },
+                { val: stats.matches, sfx: "+", lbl: "Matches Completed" },
+                { val: stats.hospitals, sfx: "", lbl: "Clinical Hubs" },
               ].map((s) => (
                 <div key={s.lbl}>
                   <div className="hero-stat-val">
@@ -181,7 +205,7 @@ export default function Home() {
                 </div>
 
                 <div className="hero-img-chip">
-                  <div className="hero-img-chip-icon">🛡️</div>
+                  <div className="hero-img-chip-icon"><Icons.Shield size={24} color="var(--hemo-red)" /></div>
                   <div>
                     <strong>Secure & Authenticated</strong>
                     <span>Verified Medical Network</span>
@@ -191,8 +215,8 @@ export default function Home() {
 
               {/* Floating tags */}
               <div className="hero-float-container">
-                <span className="hero-float-tag hero-float-tag-1">🩸 O- Negative Alert</span>
-                <span className="hero-float-tag hero-float-tag-2">⚡ 99.8% Match Rate</span>
+                <span className="hero-float-tag hero-float-tag-1" style={{display:'flex', alignItems:'center', gap: '6px'}}><Icons.Drop size={14} color="var(--hemo-red)" /> O- Negative Alert</span>
+                <span className="hero-float-tag hero-float-tag-2" style={{display:'flex', alignItems:'center', gap: '6px'}}><Icons.Zap size={14} color="#fca311" /> 99.8% Match Rate</span>
               </div>
             </div>
           </div>
@@ -232,9 +256,9 @@ export default function Home() {
         </div>
         <div className="services-grid">
           {[
-            { id: "svc-about", img: img5, icon: "🏥", title: "Medical Outreach", desc: "Our system connects directly with Jaffna's major teaching hospitals and clinics.", link: "/about", label: "Read Our Story" },
-            { id: "svc-donate", img: img3, icon: "♥️", title: "Donor Portal", desc: "Manage your donation history, health stats, and future appointments seamlessly.", link: "/donate", label: "Be a Hero" },
-            { id: "svc-request", img: img4, icon: "⚡", title: "Emergency SOS", desc: "A high-priority channel for life-threatening blood shortages across the district.", link: "/request", label: "Request SOS" },
+            { id: "svc-about", img: img5, icon: <Icons.Hospitals size={24} />, title: "Medical Outreach", desc: "Our system connects directly with Jaffna's major teaching hospitals and clinics.", link: "/about", label: "Read Our Story" },
+            { id: "svc-donate", img: img3, icon: <Icons.Heart size={24} />, title: "Donor Portal", desc: "Manage your donation history, health stats, and future appointments seamlessly.", link: "/donate", label: "Be a Hero" },
+            { id: "svc-request", img: img4, icon: <Icons.Zap size={24} />, title: "Emergency SOS", desc: "A high-priority channel for life-threatening blood shortages across the district.", link: "/request", label: "Request SOS" },
           ].map((s, idx) => (
             <div className="svc-card" key={s.id} id={s.id} data-aos="zoom-in-up" data-aos-delay={idx * 100}>
               <img src={s.img} alt={s.title} />
@@ -253,9 +277,9 @@ export default function Home() {
       <div className="stats-strip">
         <div className="stats-strip-inner">
           {[
-            { val: 2450, sfx: "+", lbl: "Active Donors" },
-            { val: 1800, sfx: "+", lbl: "Matches Found" },
-            { val: 12, sfx: "", lbl: "Hospitals Joined" },
+            { val: stats.donors, sfx: "+", lbl: "Active Donors" },
+            { val: stats.matches, sfx: "+", lbl: "Handshakes Found" },
+            { val: stats.hospitals, sfx: "", lbl: "Medical Hubs" },
             { val: 100, sfx: "%", lbl: "Free Service" },
           ].map((s) => (
             <div key={s.lbl}>
@@ -275,7 +299,7 @@ export default function Home() {
           <h2>The Choice to Save a Life.</h2>
           <p>Join the movement that's reshaping emergency healthcare across Northern Sri Lanka.</p>
           <div className="cta-btns">
-            <Link to="/register" className="hemo-btn-primary" id="cta-register">🚀 Join the Network</Link>
+            <Link to="/register" className="hemo-btn-primary" id="cta-register" style={{display:'inline-flex', alignItems:'center', gap:'8px'}}><Icons.Rocket size={18}/> Join the Network</Link>
             <Link to="/login" className="hemo-btn-secondary" id="cta-login">Sign In to Account</Link>
           </div>
         </div>
@@ -312,15 +336,15 @@ export default function Home() {
             <div className="hemo-footer-col">
               <h5>Contact Protocol</h5>
               <div className="hemo-contact-item">
-                <span className="ci-icon">📍</span>
+                <span className="ci-icon"><Icons.MapPin size={18} /></span>
                 <a href="https://goo.gl/maps/bFanvvmbxhrSjWVC7" target="_blank" rel="noreferrer">Main Research Hub<br />Jaffna, Sri Lanka</a>
               </div>
               <div className="hemo-contact-item">
-                <span className="ci-icon">📞</span>
+                <span className="ci-icon"><Icons.PhoneCall size={18} /></span>
                 <a href="tel:+94766509678">+94 76650 9678</a>
               </div>
               <div className="hemo-contact-item">
-                <span className="ci-icon">✉️</span>
+                <span className="ci-icon"><Icons.Mail size={18} /></span>
                 <span>ops@hemo.lk</span>
               </div>
             </div>

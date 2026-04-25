@@ -19,10 +19,15 @@ export const api = {
         body: JSON.stringify(userData)
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Registration failed");
+      if (!res.ok) {
+        if (data.error && data.error.includes("duplicate key value")) {
+          throw new Error("This email is already registered. Please log in.");
+        }
+        throw new Error(data.error || "Registration failed");
+      }
       return data;
     } catch (err) {
-      console.error("❌ API Register Error:", err.message);
+      console.error("API Register Error:", err.message);
       if (err.message.includes("Failed to fetch")) {
         throw new Error("Cannot connect to server at Port 5000. Please ensure the backend is running.");
       }

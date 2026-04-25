@@ -2,7 +2,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import Home from "../src/Main/Home";
 import About from "../src/Main/About";
 import Navbar from "./components/Navbar";
-import AdminLogin from "./Admin/AdminLogin";
+import Chatbot from "./components/Chatbot";
 import AdminDashboard from "./Admin/AdminDashboard";
 import UserDashboard from "./Main/UserDashboard";
 import HelpRequest from "./Main/HelpRequest";
@@ -41,7 +41,8 @@ export default function App() {
   useEffect(() => {
     if (
       path_location.pathname === "/admin" || 
-      path_location.pathname === "/admin-dashboard"
+      path_location.pathname === "/admin-dashboard" ||
+      path_location.pathname === "/dashboard"
     ) {
       setNavToggle(false);
     } else {
@@ -60,10 +61,11 @@ export default function App() {
 
   return (
     <div>
-      <Toaster position="top-right" reverseOrder={false} />
+      <Toaster position="top-right" reverseOrder={false} containerStyle={{ zIndex: 999999 }} />
       <Preloader />
       {navtoggle ? <Navbar /> : <></>}
       <ScrollToTop />
+      <Chatbot />
       <Routes>
         <Route exact path="/" index element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -71,7 +73,6 @@ export default function App() {
         <Route path="/request" element={<RequestNew />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/help/:requestId" element={<HelpRequest />} />

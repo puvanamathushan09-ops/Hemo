@@ -1,4 +1,5 @@
 const supabase = require("../config/supabase");
+const { sendSMSNotification } = require("../services/smsService");
 
 // GET all donations
 const getDonations = async (req, res) => {
@@ -43,6 +44,7 @@ const createDonation = async (req, res) => {
       request_id: request_id || null,
       donation_date: donation_date || null,
       status: status || null,
+      units: req.body.units || 0
     };
 
     const { data, error } = await supabase
@@ -53,6 +55,23 @@ const createDonation = async (req, res) => {
     if (error) {
       console.error("Supabase insert error:", error);
       return res.status(400).json({ error: error.message });
+    }
+
+    // Fire SMS notification (non-blocking)
+    try {
+      // Fetch donor info for the notification
+      const { data: donorData } = await supabase
+        .from("users")
+        .select("full_name, phone, city")
+        .eq("id", donor_id)
+        .maybeSingle();
+
+      if (donorData && donorData.phone) {
+        const smsMessage = `[HEMO] Hi ${donorData.full_name}, your blood donation pledge has been confirmed for ${donation_date || "today"}. Please visit the assigned hospital. Thank you for saving lives!`;
+        sendSMSNotification(donorData.phone, smsMessage).catch(err => console.error("SMS dispatch error:", err));
+      }
+    } catch (smsErr) {
+      console.error("SMS lookup error (non-fatal):", smsErr);
     }
 
     res.status(201).json({ message: "Donation created successfully", data });
@@ -72,6 +91,7 @@ const updateDonation = async (req, res) => {
     if (request_id !== undefined) updatePayload.request_id = request_id;
     if (donation_date !== undefined) updatePayload.donation_date = donation_date;
     if (status !== undefined) updatePayload.status = status;
+    if (req.body.units !== undefined) updatePayload.units = req.body.units;
 
     if (Object.keys(updatePayload).length === 0) {
       return res.status(400).json({ error: "No fields provided to update" });

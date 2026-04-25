@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../utils/api";
 import "../hemo.css";
-import { toast } from "react-toastify";
+import { Icons } from "../components/Icons";
+import { toast } from "react-hot-toast";
 
 function HemoLogoSVG({ size = 36 }) {
   return (
@@ -23,7 +24,7 @@ export default function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     full_name: "", email: "", password: "",
-    phone: "", blood_group: "O+", city: "", role: "donor"
+    phone: "", blood_group: "O+", city: "", role: "donor", address: ""
   });
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -117,23 +118,25 @@ export default function Register() {
                 value={formData.city} onChange={handleChange}
               />
             </div>
-            <div className="hemo-field">
-              <label className="hemo-label" htmlFor="role">Account Type *</label>
-              <div className="hemo-select-wrapper">
-                <select id="role" className="hemo-input hemo-select" required value={formData.role} onChange={handleChange}>
-                  <option value="donor">I want to be a Donor</option>
-                  <option value="patient">I am a Patient</option>
-                </select>
-              </div>
+          </div>
+          
+          <div className="hemo-form-row">
+            <div className="hemo-field" style={{ gridColumn: "span 2" }}>
+              <label className="hemo-label" htmlFor="address">Address / Street *</label>
+              <input 
+                type="text" id="address" className="hemo-input" 
+                placeholder="Full Street Address" required
+                value={formData.address || ""} onChange={handleChange}
+              />
             </div>
           </div>
           
-          <div className="hemo-info-box" style={{ margin: "1.5rem 0" }}>
-            🛡️ <strong>Secure Registration.</strong> Join a safe, medical-grade network connecting heroes to real-time needs.
+          <div className="hemo-info-box" style={{ margin: "1.5rem 0", display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+            <Icons.Shield size={18} style={{ flexShrink: 0, marginTop: '2px' }} /> <div><strong>Secure Registration.</strong> Join a safe, medical-grade network connecting heroes to real-time needs.</div>
           </div>
 
-          <button type="submit" className="hemo-form-submit">
-            🚀 Create Free Account
+          <button type="submit" className="hemo-form-submit" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <Icons.Rocket size={20} /> Create Free Account
           </button>
         </form>
         

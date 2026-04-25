@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "../hemo.css";
+import { Icons } from "./Icons";
 
 function HemoLogoSVG({ size = 34 }) {
   return (
@@ -44,9 +45,7 @@ export default function Navbar() {
 
   const active = (p) => (location.pathname === p ? "hemo-active" : "");
 
-  const homePath = user 
-    ? (user.role === 'admin' ? "/admin-dashboard" : "/dashboard")
-    : "/";
+  const homePath = "/";
 
   return (
     <>
@@ -67,8 +66,8 @@ export default function Navbar() {
           <div className="hemo-nav-cta">
             {user ? (
               <>
-                <Link to={user.role === 'admin' ? "/admin-dashboard" : "/dashboard"} className="hemo-btn-ghost" style={{ display: 'flex', alignItems: 'center' }}>
-                  <span style={{ marginRight: '6px' }}>👤</span> Dashboard
+                <Link to={user.role === 'admin' ? "/admin-dashboard" : "/dashboard"} className="hemo-btn-ghost" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Icons.User size={16} /> Dashboard
                 </Link>
                 <Link to="/login" onClick={handleLogout} className="hemo-btn-red" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
                   Logout
@@ -77,8 +76,8 @@ export default function Navbar() {
             ) : (
               <>
                 <Link to="/login" className="hemo-btn-ghost" id="nav-login-btn">Login</Link>
-                <Link to="/register" className="hemo-btn-red" id="nav-register-btn">
-                  🩸 Register
+                <Link to="/register" className="hemo-btn-red" id="nav-register-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  <Icons.Drop size={16} /> Register
                 </Link>
               </>
             )}
@@ -96,14 +95,14 @@ export default function Navbar() {
       </nav>
 
       <div className={`hemo-mobile${open ? " open" : ""}`}>
-        <Link to={homePath} className={active("/")}>🏠 Home</Link>
-        <Link to="/about" className={active("/about")}>ℹ️ About</Link>
-        <Link to="/donate" className={active("/donate")}>🩸 Donate Blood</Link>
+        <Link to={homePath} className={active("/")} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Icons.Home size={18} /> Home</Link>
+        <Link to="/about" className={active("/about")} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Icons.Info size={18} /> About</Link>
+        <Link to="/donate" className={active("/donate")} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Icons.Drop size={18} /> Donate Blood</Link>
         <div className="hemo-mobile-cta">
           {user ? (
             <>
-              <Link to={user.role === 'admin' ? "/admin-dashboard" : "/dashboard"} className="hemo-btn-ghost">👤 My Dashboard</Link>
-              <Link to="/login" onClick={handleLogout} className="hemo-btn-red">🚪 Logout</Link>
+              <Link to={user.role === 'admin' ? "/admin-dashboard" : "/dashboard"} className="hemo-btn-ghost" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><Icons.User size={18} /> My Dashboard</Link>
+              <Link to="/login" onClick={handleLogout} className="hemo-btn-red" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><Icons.Logout size={18} /> Logout</Link>
             </>
           ) : (
             <>
