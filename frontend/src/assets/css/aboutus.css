@@ -1,0 +1,346 @@
+
+
+*{
+	font-family: 'Inter', sans-serif;
+	font-weight: bold;
+}
+.Wholebody
+{	
+	padding-top: 100px;
+	max-width: 1100px;
+	margin: auto;
+	/* margin: 5px; */
+}
+.desc{
+	margin: 10px;
+	padding: 10px;
+	text-align: center;
+}
+/* #tooplate_middle { 
+
+ 	height: 55vh;
+	padding: 50px;
+	margin-top: 8vh;
+	margin-bottom: 10px;
+	background-size: cover;
+} */
+
+
+/* #tooplate_wrapper { 
+	width: 940px; 
+	padding: 0 10px 10px; 
+	margin: 0 auto; 
+} */
+
+
+
+#mid_slider { 
+	max-width: 600px;
+	margin: auto;
+	/* max-height: 500px; */
+	min-width: 300px;
+	min-height: 300px;
+	background: url("https://penntoday.upenn.edu/sites/default/files/2020-04/iStock-627356286_SOCIAL.jpg"); 
+	background-size: cover;
+	border-radius: 10px;
+	box-shadow:
+  2.8px 2.8px 2.2px rgba(0, 0, 0, 0.02),
+  6.7px 6.7px 5.3px rgba(0, 0, 0, 0.028),
+  12.5px 12.5px 10px rgba(0, 0, 0, 0.035),
+  22.3px 22.3px 17.9px rgba(0, 0, 0, 0.042),
+  41.8px 41.8px 33.4px rgba(0, 0, 0, 0.05),
+  100px 100px 80px rgba(0, 0, 0, 0.07);
+	align-items: end;
+}
+
+ p { 
+	color: #000000; 
+	margin-bottom: 30px; 
+	font-size: 14px; 
+	line-height: 26px; 
+}
+
+#mid_title { 
+	font-size: 30px; 
+	line-height: 38px; 
+	font-weight: 400; 
+	color: #000; 
+	margin-bottom: 10px;  
+}
+
+
+
+.desc-toolplate{
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+}
+
+.desc-main-div{
+	max-width: 300px;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center	;
+}
+
+	.img1{
+		height:100px;
+		width: 100px;
+		margin-top: auto;
+		
+	}
+
+	.img2
+
+	h3{
+		color: #000000;
+	}
+	h1{
+		font-family:"lato";
+		
+	}
+
+
+::-webkit-scrollbar{
+	width: 0cm;
+  }
+ .i2{
+	height: 285px;
+	width: 270px;
+	padding: 10px;
+  
+  }
+  
+  
+  .container1 {
+	position: relative;
+	height: 500px;
+	width: 1000px;
+	top: 60px;
+	
+	display: flex;
+  }
+  
+  
+	p{
+
+	   font-weight: 500;
+	   font-size: 18px;
+	}
+  
+.outer-dev-box{
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+}	
+
+.dev-name{
+	text-align: center;
+}
+  .box{
+	margin: 10px;
+	width: 300px;
+	max-width: 400px;
+	/* height: ; */
+  height: 400px; 
+  background: #D9D9D9;
+  background-image: url('../img/YASHWANTSIR.webp');
+  background-size: cover;
+  /* background-repeat: no-repeat; */
+  /* border-radius: 0px; */
+  box-shadow:
+  2.8px 2.8px 2.2px rgba(0, 0, 0, 0.02),
+  6.7px 6.7px 5.3px rgba(0, 0, 0, 0.028),
+  12.5px 12.5px 10px rgba(0, 0, 0, 0.035),
+  22.3px 22.3px 17.9px rgba(0, 0, 0, 0.042),
+  41.8px 41.8px 33.4px rgba(0, 0, 0, 0.05),
+  100px 100px 80px rgba(0, 0, 0, 0.07);
+  font-family: 'Inter', sans-serif;
+  font-weight: bold;
+  }
+  
+  .box-1{
+	background-size: cover;
+	background-image: url('../img/snehil.jpg');
+	max-width: 300px;
+
+  box-shadow:
+  2.8px 2.8px 2.2px rgba(0, 0, 0, 0.02),
+  6.7px 6.7px 5.3px rgba(0, 0, 0, 0.028),
+  12.5px 12.5px 10px rgba(0, 0, 0, 0.035),
+  22.3px 22.3px 17.9px rgba(0, 0, 0, 0.042),
+  41.8px 41.8px 33.4px rgba(0, 0, 0, 0.05),
+  100px 100px 80px rgba(0, 0, 0, 0.07);
+  }
+  
+  .box-2{
+	background-image: url('../img/shashank.jpg');
+  background-size: cover;
+  max-width: 300px;
+  box-shadow:
+  2.8px 2.8px 2.2px rgba(0, 0, 0, 0.02),
+  6.7px 6.7px 5.3px rgba(0, 0, 0, 0.028),
+  12.5px 12.5px 10px rgba(0, 0, 0, 0.035),
+  22.3px 22.3px 17.9px rgba(0, 0, 0, 0.042),
+  41.8px 41.8px 33.4px rgba(0, 0, 0, 0.05),
+  100px 100px 80px rgba(0, 0, 0, 0.07);
+  }
+  
+  .box-3{
+	background-image: url('../img/harsha.jpg');
+  background-size: cover;
+  max-width: 300px;
+  box-shadow:
+  2.8px 2.8px 2.2px rgba(0, 0, 0, 0.02),
+  6.7px 6.7px 5.3px rgba(0, 0, 0, 0.028),
+  12.5px 12.5px 10px rgba(0, 0, 0, 0.035),
+  22.3px 22.3px 17.9px rgba(0, 0, 0, 0.042),
+  41.8px 41.8px 33.4px rgba(0, 0, 0, 0.05),
+  100px 100px 80px rgba(0, 0, 0, 0.07);
+  }
+  
+  .box-4{
+	background-image: url('../img/sudheer.jpg');
+  background-size: cover;
+  max-width: 300px;
+  box-shadow:
+  2.8px 2.8px 2.2px rgba(0, 0, 0, 0.02),
+  6.7px 6.7px 5.3px rgba(0, 0, 0, 0.028),
+  12.5px 12.5px 10px rgba(0, 0, 0, 0.035),
+  22.3px 22.3px 17.9px rgba(0, 0, 0, 0.042),
+  41.8px 41.8px 33.4px rgba(0, 0, 0, 0.05),
+  100px 100px 80px rgba(0, 0, 0, 0.07);
+  }
+  .box-6{
+	max-width: 300px;
+	background-image: url('../img/akash.jpg');
+  background-size: cover;
+  box-shadow:
+  2.8px 2.8px 2.2px rgba(0, 0, 0, 0.02),
+  6.7px 6.7px 5.3px rgba(0, 0, 0, 0.028),
+  12.5px 12.5px 10px rgba(0, 0, 0, 0.035),
+  22.3px 22.3px 17.9px rgba(0, 0, 0, 0.042),
+  41.8px 41.8px 33.4px rgba(0, 0, 0, 0.05),
+  100px 100px 80px rgba(0, 0, 0, 0.07);
+  }
+  
+  #gallery{
+	height: 100vh;
+  }
+  .gbox{
+	height: 45vh;
+	background-image: url('https://campusconnect.gitam.edu/Admin/assets/uploads//sliders/gitam_campus_connect_mobile_Blood-Donation-Camp-mob_1.jpg');
+	background-size: cover;
+	margin: 10px;
+	box-shadow:
+	2.8px 2.8px 2.2px rgba(0, 0, 0, 0.02),
+	6.7px 6.7px 5.3px rgba(0, 0, 0, 0.028),
+	12.5px 12.5px 10px rgba(0, 0, 0, 0.035),
+	22.3px 22.3px 17.9px rgba(0, 0, 0, 0.042),
+	41.8px 41.8px 33.4px rgba(0, 0, 0, 0.05),
+	100px 100px 80px rgba(0, 0, 0, 0.07);
+  }
+  .gbox1{
+	height: 45vh;
+	background-image: url('https://gucms.gitam.edu/nss_cms/assets/uploads/34ff13b8407e86bc81668056a075a6f7.JPG');
+	background-size: cover;
+	margin: 10px;
+  }
+  .gbox2{
+	height: 22vh;
+	background-image: url('../img/gbox3.jpg');
+
+	background-size: cover;
+	margin: 10px;
+  }
+  .gbox3{
+	height: 45vh;
+	background-image: url('https://cdn.create.vista.com/api/media/small/47174651/stock-photo-blood-donor-at-donation');
+	
+	background-size: cover;
+	margin: 10px;
+  }
+  .gbox4{
+	height: 21vh;
+	background-image: url('https://campusconnect.gitam.edu/Admin/assets/uploads//sliders/gitam_campus_connect_desktop_Blood-Donation-Camp_1.jpg');
+
+	background-size: cover;
+	margin: 10px;
+  }
+  .gbox5{
+	height: 45vh;
+	background-image: url('https://gimsr.gitam.edu/imagecol_lasts/pathology10.jpg');
+	background-size: cover;
+	margin: 10px;
+  }
+  .gbox6{
+	height: 45vh;
+	background-image: url('../img/gbox2.jpg');
+	background-size: cover;
+	margin: 10px;
+  }
+
+  .col_fw {
+	 width: auto;
+	 }
+.col_allw270 { 
+	float: left; 
+	/* width: 270px; */
+	 margin-right: 35px 
+	}
+
+.fp_service_box img { 
+	float: left; 
+	margin-right: 15px; 
+}
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+.ourteam{
+	font-size: 44px;
+	font-family: 'Inter', sans-serif;
+	font-weight: bold;
+}
+.cleaner { clear: both }
+
+  
+@media only screen and (max-width: 1000px) { 
+	.features {
+	  flex-direction: column;
+	  padding: 50px;
+	}
+
+	
+	/* h1 {
+	  font-size: 1.9rem;
+	}
+	
+	h2 {
+	  font-size: 1rem;
+	}
+	
+	p {
+	  font-size: 0.8rem;
+	} */
+}
+
+
+
+  .navbar{
+	background-color: #000000 !important;
+  }
+  .navbar img{
+	height:8vh;
+	width: auto;
+  }
+
+  .nav-link{
+padding-left: 50px !important;
+letter-spacing: 1px;
+  }
+
+
+  @media screen  and (min-width: 0px) and (max-width: 800px){
+}

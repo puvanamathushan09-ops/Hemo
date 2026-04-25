@@ -99,4 +99,43 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, registerUser, loginUser };
+const updateUser = async (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+
+  // Prevent password update via this route for simplicity
+  delete updateData.password;
+  delete updateData.email; // Also prevent email update for safety
+
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .update(updateData)
+      .eq("id", id)
+      .select()
+      .maybeSingle();
+
+    if (error) return res.status(400).json({ error: error.message });
+    res.json({ message: "Profile updated succesfully", data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const { error } = await supabase
+      .from("users")
+      .delete()
+      .eq("id", id);
+
+    if (error) return res.status(400).json({ error: error.message });
+    res.json({ message: "User deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = { getUsers, registerUser, loginUser, updateUser, deleteUser };

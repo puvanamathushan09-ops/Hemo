@@ -1,17 +1,22 @@
+require("dotenv").config({ override: true });
 const express = require("express");
+const cors = require("cors");
 const supabase = require("./config/supabase");
 const userRoutes = require("./routes/userRoutes");
 const hospitalRoutes = require("./routes/hospitalRoutes");
 const bloodRequestRoutes = require("./routes/bloodRequestRoutes");
 const donationRoutes = require("./routes/donationRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 // Register routes
 app.use("/users", userRoutes);
 app.use("/hospitals", hospitalRoutes);
 app.use("/blood-requests", bloodRequestRoutes);
 app.use("/donations", donationRoutes);
+app.use("/notifications", notificationRoutes);
 
 // JSON parse error handler (returns 400 with a helpful message)
 app.use((err, req, res, next) => {
@@ -25,7 +30,8 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+  console.log(`🚀 API Server is BONDED to Port: ${PORT}`);
+  console.log(`🔗 Local Access: http://localhost:${PORT}`);
 });
 
 const testConnection = async () => {

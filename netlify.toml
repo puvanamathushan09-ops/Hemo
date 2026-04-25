@@ -1,0 +1,12 @@
+[build]
+  # CI=false prevents warnings from failing the build
+  command = "npm install && CI=false npm run build"
+  
+  # The folder where the built files live
+  publish = "build"
+
+# Handles React Router sub-pages (404 errors)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

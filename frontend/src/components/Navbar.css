@@ -1,0 +1,307 @@
+/* =============================================
+   PREMIUM NAVBAR - LSBB Blood Bank
+   ============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --red-primary: #e63946;
+  --red-dark: #c1121f;
+  --red-glow: rgba(230, 57, 70, 0.4);
+  --bg-dark: #0a0a0f;
+  --bg-card: rgba(255,255,255,0.04);
+  --glass: rgba(10, 10, 15, 0.85);
+  --border-glass: rgba(255,255,255,0.08);
+  --text-primary: #f8f8ff;
+  --text-muted: rgba(248,248,255,0.55);
+  --nav-height: 72px;
+}
+
+/* ---- Base Reset ---- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+}
+
+/* ---- Navbar Wrapper ---- */
+.lsbb-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  height: var(--nav-height);
+  background: var(--glass);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border-glass);
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+  transition: all 0.3s ease;
+}
+
+.lsbb-nav.scrolled {
+  background: rgba(5, 5, 10, 0.97);
+  box-shadow: 0 4px 40px rgba(0,0,0,0.5);
+}
+
+.lsbb-nav-inner {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ---- Logo ---- */
+.lsbb-logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.lsbb-logo-img {
+  height: 42px;
+  width: auto;
+  filter: drop-shadow(0 0 8px var(--red-glow));
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.lsbb-logo-wrap:hover .lsbb-logo-img {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 16px var(--red-glow));
+}
+
+.lsbb-logo-text {
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #fff 30%, var(--red-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ---- Desktop Nav Links ---- */
+.lsbb-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  list-style: none;
+}
+
+.lsbb-nav-links a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-radius: 8px;
+  letter-spacing: 0.3px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.lsbb-nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 60%;
+  height: 2px;
+  background: var(--red-primary);
+  border-radius: 2px;
+  transition: transform 0.25s ease;
+}
+
+.lsbb-nav-links a:hover {
+  color: var(--text-primary);
+  background: rgba(255,255,255,0.06);
+}
+
+.lsbb-nav-links a:hover::after,
+.lsbb-nav-links a.active-link::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.lsbb-nav-links a.active-link {
+  color: var(--text-primary);
+}
+
+/* ---- CTA Buttons ---- */
+.lsbb-nav-cta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.btn-nav-login {
+  padding: 0.45rem 1.1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  letter-spacing: 0.2px;
+}
+
+.btn-nav-login:hover {
+  border-color: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.07);
+  color: #fff;
+}
+
+.btn-nav-donate {
+  padding: 0.48rem 1.2rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--red-primary), var(--red-dark));
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: 0 4px 20px var(--red-glow);
+  transition: all 0.25s ease;
+  letter-spacing: 0.2px;
+}
+
+.btn-nav-donate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--red-glow);
+  color: #fff;
+}
+
+/* ---- Hamburger ---- */
+.lsbb-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 6px;
+  transition: border-color 0.2s;
+}
+
+.lsbb-hamburger:hover {
+  border-color: rgba(255,255,255,0.25);
+}
+
+.lsbb-hamburger span {
+  display: block;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.lsbb-hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.lsbb-hamburger.open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.lsbb-hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ---- Mobile Drawer ---- */
+.lsbb-mobile-menu {
+  position: fixed;
+  top: var(--nav-height);
+  left: 0;
+  right: 0;
+  background: rgba(8, 8, 14, 0.97);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-glass);
+  padding: 1rem 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  transform: translateY(-120%);
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+.lsbb-mobile-menu.open {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
+
+.lsbb-mobile-menu a {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid var(--border-glass);
+}
+
+.lsbb-mobile-menu a:last-child {
+  border-bottom: none;
+}
+
+.lsbb-mobile-menu a:hover {
+  color: var(--text-primary);
+  background: rgba(255,255,255,0.06);
+}
+
+.lsbb-mobile-cta {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.lsbb-mobile-cta a {
+  flex: 1;
+  justify-content: center;
+  border-bottom: none !important;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .lsbb-nav-links,
+  .lsbb-nav-cta {
+    display: none;
+  }
+
+  .lsbb-hamburger {
+    display: flex;
+  }
+}
+
+/* ---- Page body pad ---- */
+.page-content {
+  padding-top: var(--nav-height);
+}

@@ -1,0 +1,32 @@
+*{
+  font-family: 'system-ui'
+}
+.admindrbody{
+  padding-top: 100px;
+  min-width: 100vw;
+}
+h1{
+  text-align: center;
+  color:rgb(235, 87, 87);
+}
+
+p{
+  text-align: center;
+  font-size:larger;
+  color:rgb(235, 87, 87);
+}
+.table-donate-request{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  white-space: pre-wrap;
+}
+
+table, th, td {
+  border:1px solid rgb(255, 253, 253);
+  color: rgb(255, 255, 255);
+}
+.hidden {
+  display: none;
+}
