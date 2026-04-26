@@ -7,6 +7,8 @@ const hospitalRoutes = require("./routes/hospitalRoutes");
 const bloodRequestRoutes = require("./routes/bloodRequestRoutes");
 const donationRoutes = require("./routes/donationRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const statusRoutes = require("./routes/statusRoutes");
+const { client: whatsappClient } = require("./whatsappClient");
 
 const app = express();
 app.use(cors());
@@ -19,6 +21,7 @@ app.use("/hospitals", hospitalRoutes);
 app.use("/blood-requests", bloodRequestRoutes);
 app.use("/donations", donationRoutes);
 app.use("/notifications", notificationRoutes);
+app.use("/status", statusRoutes);
 
 // JSON parse error handler (returns 400 with a helpful message)
 app.use((err, req, res, next) => {

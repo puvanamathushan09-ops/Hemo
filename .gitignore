@@ -39,3 +39,5 @@ Thumbs.db
 # Sub-project specific entries
 frontend/node_modules/
 backend/node_modules/
+backend/.wwebjs_auth/
+backend/.wwebjs_cache/
