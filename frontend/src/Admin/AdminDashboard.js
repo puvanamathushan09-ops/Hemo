@@ -599,15 +599,16 @@ export default function AdminDashboard() {
         request_id: newReq.id,
         blood_group: requestForm.blood_group,
         hospital_name: selectedHospital.name,
+        hospital_address: selectedHospital.address || selectedHospital.city,
         units: requestForm.units,
-        donor_emails: matchingDonors.map(d => d.email)
+        donors: matchingDonors.map(d => ({ email: d.email, phone: d.phone }))
       });
       toast.success(targetDonor ? `SOS Alert sent to ${targetDonor.full_name}!` : `SOS Broadcast sent to ${matchingDonors.length} donors!`);
       setModal(null);
       setShowMap(false);
       setMapCoords(null);
-    } catch {
-      toast.error("Broadcast partially failed: Check connection");
+    } catch (err) {
+      toast.error(err.message || "Broadcast partially failed: Check connection");
     } finally {
       setIsBroadcasting(false);
     }

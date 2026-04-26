@@ -7,3 +7,5 @@ build/
 coverage/
 npm-debug.log*
 *.log
+.wwebjs_auth/
+.wwebjs_cache/
