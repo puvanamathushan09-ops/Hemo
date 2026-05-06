@@ -8,8 +8,6 @@ const bloodRequestRoutes = require("./routes/bloodRequestRoutes");
 const donationRoutes = require("./routes/donationRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const statusRoutes = require("./routes/statusRoutes");
-const { client: whatsappClient } = require("./whatsappClient");
-
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));

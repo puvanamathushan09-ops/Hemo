@@ -1,10 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const supabase = require("../config/supabase");
-const { getWhatsappStatus } = require("../whatsappClient");
 
 router.get("/", async (req, res) => {
-    const waStatus = getWhatsappStatus();
     
     let dbStatus = "checked";
     let dbError = null;
@@ -26,7 +24,6 @@ router.get("/", async (req, res) => {
         status: dbStatus === "connected" ? "online" : "degraded",
         timestamp: new Date().toISOString(),
         services: {
-            whatsapp: waStatus,
             database: {
                 status: dbStatus,
                 error: dbError
