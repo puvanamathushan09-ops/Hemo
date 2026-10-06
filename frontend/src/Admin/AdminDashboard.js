@@ -1262,11 +1262,67 @@ export default function AdminDashboard() {
             <button className="admin-btn admin-btn-ghost" onClick={() => setModal(null)}>Discard</button>
             <button className="admin-btn admin-btn-primary" onClick={async () => {
               try {
+                const wasPending = editItem?.status === "pending";
+                const isBeingApproved = wasPending && requestForm.status === "approved";
+
                 await api.updateBloodRequest(editItem.id, requestForm);
-                toast.success("SOS Alert synchronized");
-                fetchAll();
+
+                if (isBeingApproved) {
+                  const hospital = hospitals.find(h => h.id === editItem.hospital_id);
+
+                  const matchingDonors = users.filter(u =>
+                    u.role === "donor" &&
+                    u.blood_group === requestForm.blood_group &&
+                    u.city?.trim().toLowerCase() === requestForm.city?.trim().toLowerCase()
+                  );
+
+                  if (!hospital) {
+                    toast.warn("Request approved, but no hospital is linked. Donor notifications were not sent.");
+                  } else if (matchingDonors.length === 0) {
+                    toast.warn("Request approved, but no matching donors were found.");
+                  } else {
+                    const contactableDonors = matchingDonors.filter(
+                      d => d.email || d.phone
+                    );
+
+                    if (contactableDonors.length === 0) {
+                      toast.warn("Request approved, but matching donors have no contact details.");
+                    } else {
+                      const notification = await api.sendNotifications({
+                        request_id: editItem.id,
+                        blood_group: requestForm.blood_group,
+                        hospital_name: hospital.name,
+                        hospital_address: hospital.address || hospital.city,
+                        units: 1,
+                        donors: contactableDonors.map(d => ({
+                          email: d.email,
+                          phone: d.phone
+                        }))
+                      });
+
+                      const waSent = notification?.waRes?.status === "sent";
+                      const emailSent = notification?.emailRes?.status === "sent";
+
+                      if (waSent || emailSent) {
+                        toast.success(
+                          `Request approved. Alert sent to ${contactableDonors.length} matching donor(s).`
+                        );
+                      } else {
+                        toast.warn(
+                          "Request approved, but donor notifications could not be delivered."
+                        );
+                      }
+                    }
+                  }
+                } else {
+                  toast.success("SOS Alert synchronized");
+                }
+
+                await fetchAll();
                 setModal(null);
-              } catch { toast.error("Hub Sync failed"); }
+              } catch (err) {
+                toast.error(err.message || "Hub Sync failed");
+              }
             }}>Modify SOS Node</button>
           </div>
         </Modal>
